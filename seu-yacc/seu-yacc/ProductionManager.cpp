@@ -15,6 +15,7 @@
  */
 Production ProductionManager::buildProduction(string left, vector<string> right) {
 	Production production;
+
 	return Production();
 }
 

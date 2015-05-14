@@ -8,9 +8,12 @@
 
 class TokenManager {
 public: 
-	Token buildToken(string name, string type, Associativity associativity, string precedence, TokenType Tokentype);
+	NonterminalToken buildToken(string name, string type, Associativity associativity, string precedence);
+	TerminalToken buildToken(string name);
 private:
-	map<Token, int> tokens;
+	map<string, int> tokens;
+	map<int, TerminalToken> terminals;
+	map<int, NonterminalToken> nonterminals;
 };
 
 #endif //_TOKENMANAGER_H
