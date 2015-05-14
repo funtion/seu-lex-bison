@@ -88,6 +88,7 @@
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TOKEN.h" />
     <ClInclude Include="TokenManager.h" />
+    <ClInclude Include="YaccReader.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LRProduction.cpp" />
@@ -102,6 +103,7 @@
     </ClCompile>
     <ClCompile Include="TOKEN.cpp" />
     <ClCompile Include="TokenManager.cpp" />
+    <ClCompile Include="YaccReader.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -45,6 +45,9 @@
     <ClInclude Include="TokenManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="YaccReader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -72,6 +75,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TokenManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="YaccReader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
