@@ -9,14 +9,14 @@ int _tmain(int argc, char* argv[])
 		cout << "usage: yacc file_name.y\n";
 		return 0;
 	}
-	FILE* file = fopen(argv[1],"r");
-	if (file == NULL){
-		cout << "cannot open file " << argv[1] << endl;
+	FILE* file;
+	int error;
+	if(error = fopen_s(&file,argv[1], "r")){
+		cout << "cannot open file " << argv[1]<<"error code "<< error << endl;
 		return 1;
 	}
 	YaccReader reader(file);
-
-
+	reader.read();
 	return 0;
 }
 
