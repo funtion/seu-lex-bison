@@ -2,18 +2,12 @@
 //
 
 #include "stdafx.h"
-#include <iostream>
-#include <fstream>
-using namespace std;
+
 
 int _tmain(int argc, _TCHAR* argv[])
 {
 	return 0;
 }
-void readfile(){
 
-	cout<<"test commit";
-	
-}
 
 
