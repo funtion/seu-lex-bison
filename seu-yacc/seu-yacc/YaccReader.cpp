@@ -2,7 +2,7 @@
 #include "YaccReader.h"
 
 
-YaccReader::YaccReader(FILE* file,TokenManager tokenManager, ProductionManager productionManager) 
+YaccReader::YaccReader(FILE* file,TokenManager& tokenManager, ProductionManager& productionManager) 
 	:file(file), productionManager(productionManager), tokenManager(tokenManager)
 {
 

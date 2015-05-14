@@ -4,7 +4,7 @@
 class YaccReader
 {
 public:
-	YaccReader(FILE*, TokenManager tokenManager, ProductionManager productionManager);
+	YaccReader(FILE*, TokenManager& tokenManager, ProductionManager& productionManager);
 	~YaccReader();
 	int read();
 private:

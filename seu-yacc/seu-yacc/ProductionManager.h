@@ -12,7 +12,7 @@ public:
      * @param left
      * @param right
      */
-    Production& buildProduction(string left, vector<string> right);
+    Production buildProduction(string left, vector<string> right);
     
     /**
      * @param procudtion

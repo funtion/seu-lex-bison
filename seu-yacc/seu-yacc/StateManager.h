@@ -11,7 +11,7 @@ public:
     /**
      * @param productions
      */
-    LRState& buildState(vector<LRProduction> productions);
+    LRState buildState(vector<LRProduction> productions);
 private: 
     map<LRState,int> states;
 };

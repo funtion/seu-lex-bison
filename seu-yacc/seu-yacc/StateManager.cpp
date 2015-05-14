@@ -12,6 +12,6 @@
  * @param productions
  * @return LRState&
  */
-LRState& StateManager::buildState(vector<LRProduction> productions) {
+LRState StateManager::buildState(vector<LRProduction> productions) {
 	return LRState();
 }

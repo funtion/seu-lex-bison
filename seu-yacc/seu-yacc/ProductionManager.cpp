@@ -13,7 +13,8 @@
  * @param right
  * @return Procudtion&
  */
-Production& ProductionManager::buildProduction(string left, vector<string> right) {
+Production ProductionManager::buildProduction(string left, vector<string> right) {
+	Production production;
 	return Production();
 }
 

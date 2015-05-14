@@ -4,18 +4,13 @@
 #ifndef _TOKENMANAGER_H
 #define _TOKENMANAGER_H
 
-enum TokenType{
-	TERMINAL,
-	NO_TERMINAL
-};
+
 
 class TokenManager {
 public: 
-    
-    /**
-     * @param token
-     */
-	TokenType getTokenType(Token token);
+	Token buildToken(string name, string type, Associativity associativity, string precedence, TokenType Tokentype);
+private:
+	map<Token, int> tokens;
 };
 
 #endif //_TOKENMANAGER_H
