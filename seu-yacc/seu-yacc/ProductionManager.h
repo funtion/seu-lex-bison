@@ -18,6 +18,9 @@ public:
      * @param procudtion
      */
     int getProductionID(const Production& procudtion);
+
+	vector<Production> getProduction(NonterminalToken noterminal);
+
 private: 
 	map<Production,int> productions;
 };
