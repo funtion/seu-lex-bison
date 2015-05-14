@@ -12,7 +12,7 @@ int _tmain(int argc, _TCHAR* argv[])
 }
 void readfile(){
 
-	cout<<"thisis redfile function";
+	cout<<"thisi s r edfile function";
 	
 }
 
