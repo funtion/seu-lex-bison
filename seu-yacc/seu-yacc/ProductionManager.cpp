@@ -11,12 +11,19 @@
 /**
  * @param left
  * @param right
- * @return Procudtion&
+ * @return Procudtion
  */
 Production ProductionManager::buildProduction(string left, vector<string> right) {
 	Production production;
-
-	return Production();
+	production.left = tokenManager.buildToken(left);
+	for (const auto& r : right) {
+		production.right.push_back(tokenManager.buildToken(r));
+	}
+	if (productions.find(production) == productions.end()) {
+		int id = productions.size();
+		productions[production] = id;
+	}
+	return production;
 }
 
 /**
@@ -24,5 +31,12 @@ Production ProductionManager::buildProduction(string left, vector<string> right)
  * @return int
  */
 int ProductionManager::getProductionID(const Production& procudtion) {
-    return 0;
+	return productions[procudtion];
+}
+/**
+* @param noterminal
+* @return vector<Production>
+*/
+vector<Production> ProductionManager::getProduction(NonterminalToken noterminal) {
+
 }

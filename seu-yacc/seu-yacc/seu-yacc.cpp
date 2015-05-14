@@ -18,7 +18,7 @@ int _tmain(int argc, char* argv[])
 		return 1;
 	}
 	TokenManager tokenManager;
-	ProductionManager productionManager;
+	ProductionManager productionManager(tokenManager);
 	YaccReader reader(file, tokenManager, productionManager);
 	
 	reader.read();
