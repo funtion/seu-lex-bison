@@ -12,7 +12,7 @@ int _tmain(int argc, _TCHAR* argv[])
 }
 void readfile(){
 
-	cout<<"test commit";
+	cout<<"thisis redfile function";
 	
 }
 
