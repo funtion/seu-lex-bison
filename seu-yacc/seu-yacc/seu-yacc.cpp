@@ -3,6 +3,8 @@
 
 #include "stdafx.h"
 #include "YaccReader.h"
+#include "TokenManager.h"
+#include "ProductionManager.h"
 int _tmain(int argc, char* argv[])
 {
 	if (argc != 2){
@@ -15,7 +17,10 @@ int _tmain(int argc, char* argv[])
 		cout << "cannot open file " << argv[1]<<"error code "<< error << endl;
 		return 1;
 	}
-	YaccReader reader(file);
+	TokenManager tokenManager;
+	ProductionManager productionManager;
+	YaccReader reader(file, tokenManager, productionManager);
+	
 	reader.read();
 	return 0;
 }

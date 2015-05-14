@@ -1,10 +1,10 @@
 #pragma once
+#include "ProductionManager.h"
+#include "TokenManager.h"
 class YaccReader
 {
-private:
-	FILE* file;
 public:
-	YaccReader(FILE*);
+	YaccReader(FILE*, TokenManager tokenManager, ProductionManager productionManager);
 	~YaccReader();
 	int read();
 private:
@@ -14,5 +14,9 @@ public:
 	string userHeader;
 	// code defined by user
 	string userCode;
+	TokenManager& tokenManager;
+	ProductionManager& productionManager;
+private:
+	FILE* file;
 };
 
