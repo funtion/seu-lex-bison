@@ -5,7 +5,7 @@
 #ifndef _PRODUCTION_H
 #define _PRODUCTION_H
 
-class Production {//存储所有产生式的向量
+class Production {
 public: 
     Token left;
     vector<Token> right;

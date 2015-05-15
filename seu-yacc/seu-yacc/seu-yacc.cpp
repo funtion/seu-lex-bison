@@ -2,18 +2,28 @@
 //
 
 #include "stdafx.h"
-#include <iostream>
-#include <fstream>
-using namespace std;
-
-int _tmain(int argc, _TCHAR* argv[])
+#include "YaccReader.h"
+#include "TokenManager.h"
+#include "ProductionManager.h"
+int _tmain(int argc, char* argv[])
 {
+	if (argc != 2){
+		cout << "usage: yacc file_name.y\n";
+		return 0;
+	}
+	FILE* file;
+	int error;
+	if(error = fopen_s(&file,argv[1], "r")){
+		cout << "cannot open file " << argv[1]<<"error code "<< error << endl;
+		return 1;
+	}
+	TokenManager tokenManager;
+	ProductionManager productionManager;
+	YaccReader reader(file, tokenManager, productionManager);
+	
+	reader.read();
 	return 0;
 }
-void readfile(){
 
-	cout<<"thisi  s r edfile function";
-	
-}
 
 

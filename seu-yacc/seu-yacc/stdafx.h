@@ -13,3 +13,9 @@
 
 
 // TODO: reference additional headers your program requires here
+#include <vector>
+#include <map>
+#include <iostream>
+#include <fstream>
+#include <cstdio>
+using namespace std;
