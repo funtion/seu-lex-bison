@@ -36,9 +36,6 @@
     <ClInclude Include="ProductionManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="StateManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="TOKEN.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -46,6 +43,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="YaccReader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LRBuilder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -68,9 +68,6 @@
     <ClCompile Include="ProductionManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="StateManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="TOKEN.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -80,5 +77,11 @@
     <ClCompile Include="YaccReader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="LRBuilder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
 </Project>

@@ -19,14 +19,14 @@ public:
 	}
 };
 
-class NonterminalToken : public Token{
+class TerminalToken : public Token{
 public:
 	string type;
 	Associativity associativity;
 	string precedence;
 };
 
-class TerminalToken : public Token{
+class NonterminalToken : public Token {
 
 };
 

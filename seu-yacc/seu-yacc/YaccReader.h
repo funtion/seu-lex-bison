@@ -18,5 +18,7 @@ public:
 	ProductionManager& productionManager;
 private:
 	FILE* file;
+public:
+	NoterminalToken startToken;
 };
 

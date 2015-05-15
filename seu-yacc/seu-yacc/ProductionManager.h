@@ -23,11 +23,17 @@ public:
 	/**
 	* @param noterminal
 	*/
-	vector<Production> getProduction(NonterminalToken noterminal);
+	vector<Production> getProductions(const NonterminalToken& noterminal);
 
 private: 
-	map<Production,int> productions;
+	map<Production,int> productionsID;
+	map<int, Production> productions;
 	TokenManager& tokenManager;
+public:
+
+	Production getProduction(int id) {
+		return productions[id];
+	}
 };
 
 #endif //_PRODUCTIONMANAGER_H
