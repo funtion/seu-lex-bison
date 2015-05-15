@@ -10,6 +10,17 @@ public:
     Token left;
     vector<Token> right;
     string action;
+	bool operator<(const Production& r)const {
+		if (left == r.left) {
+			for (int i = 0; i < min(right.size(), r.right.size()); i++) {
+				if (! (right[i] == r.right[i])) {
+					return right[i] < r.right[i];
+				}
+			}
+			return right.size() < r.right.size();
+		}
+		return left < r.left;
+	}
 };
 
 #endif //_PRODUCTION_H

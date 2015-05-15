@@ -1,8 +1,6 @@
- 
-
-
 #ifndef _LRPRODUCTION_H
 #define _LRPRODUCTION_H
+#include "TOKEN.h"
 
 class LRProduction {
 public: 

@@ -19,4 +19,5 @@
 #include <fstream>
 #include <cstdio>
 #include <set>
+#include <algorithm>
 using namespace std;
