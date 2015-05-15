@@ -19,6 +19,6 @@ public:
 private:
 	FILE* file;
 public:
-	NoterminalToken startToken;
+	NonterminalToken startToken;
 };
 

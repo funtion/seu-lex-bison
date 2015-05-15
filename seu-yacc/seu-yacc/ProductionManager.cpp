@@ -39,5 +39,7 @@ int ProductionManager::getProductionID(const Production& procudtion) {
 * @return vector<Production>
 */
 vector<Production> ProductionManager::getProductions(const NonterminalToken& noterminal) {
+	//TODO all production of a no terminal
+	return{};
 
 }
