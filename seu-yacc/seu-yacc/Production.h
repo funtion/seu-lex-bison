@@ -12,7 +12,7 @@ public:
     string action;
 	bool operator<(const Production& r)const {
 		if (left == r.left) {
-			for (int i = 0; i < min(right.size(), r.right.size()); i++) {
+			for (int i = 0; i < (int)min(right.size(), r.right.size()); i++) {
 				if (! (right[i] == r.right[i])) {
 					return right[i] < r.right[i];
 				}

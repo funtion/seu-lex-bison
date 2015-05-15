@@ -27,7 +27,7 @@ LRState LRBuilder::buildState(const vector<LRProduction> initProduction) {
 		bool newProduction = false;
 		for (const auto& lrproduction : state.productions) {
 			const auto& prooduction = productionManager.getProduction(lrproduction.productionId);
-			if (lrproduction.pos < prooduction.right.size()) { //dot is not at end
+			if (lrproduction.pos < (int)prooduction.right.size()) { //dot is not at end
 				const auto& nextToken = prooduction.right[lrproduction.pos];
 				if (!tokenManager.isTerminal(nextToken)) {
 					const auto& nextProdutions = productionManager.getProductions((NonterminalToken&)nextToken);
