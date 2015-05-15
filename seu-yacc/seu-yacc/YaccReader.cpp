@@ -40,7 +40,7 @@ string YaccReader::readUntil(const string& s)
 		result += (char)c;
 		if (result.length() >= s.length()){
 			const string& last = result.substr(result.length() - s.length(), s.length());
-			if (last == s){
+			if (&last==&s){
 				result = result.substr(0, result.length() - s.length());
 				break;
 			}
