@@ -3,17 +3,31 @@
 
 #ifndef _TOKEN_H
 #define _TOKEN_H
-enum Assiciativity
+enum Associativity
 {
 	LEFT,
 	RIGHT
 };
+
 class Token {
 public: 
     string name;
-    string type;
-    Assiciativity associativity;
-    string precedence;
+    
+	bool operator<(const Token& r) const
+	{
+		return name < r.name;
+	}
+};
+
+class TerminalToken : public Token{
+public:
+	string type;
+	Associativity associativity;
+	string precedence;
+};
+
+class NonterminalToken : public Token {
+
 };
 
 #endif //_TOKEN_H
