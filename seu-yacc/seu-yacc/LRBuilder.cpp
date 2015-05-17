@@ -95,7 +95,7 @@ int LRBuilder::initFirst() {
 				}
 			}
 		}
-		if (changed) {
+		if (!changed) {
 			break;
 		}
 	}
