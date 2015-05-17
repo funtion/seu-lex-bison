@@ -17,6 +17,16 @@ private:
 public:
 	bool isTerminal(const Token& token);
 	bool isTerminal(const string& token);
+	inline map<int, TerminalToken>& allTerminal() {
+		return terminals;
+	}
+	inline map<int, NonterminalToken>& allNonterminal() {
+		return nonterminals;
+	}
+	int getTokenId(const string& token) {
+		return tokens[token];
+	}
+
 };
 
 #endif //_TOKENMANAGER_H

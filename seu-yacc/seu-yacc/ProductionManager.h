@@ -34,6 +34,9 @@ public:
 	Production getProduction(int id) {
 		return productions[id];
 	}
+	map<Production, int>& all() {
+		return productionsID;
+	}
 };
 
 #endif //_PRODUCTIONMANAGER_H
