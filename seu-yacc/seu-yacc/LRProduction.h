@@ -6,7 +6,17 @@ class LRProduction {
 public: 
     int productionId;
     int pos;
-	vector<TerminalToken> lookAhead;
+	int lookAhead;
+	bool operator<(const LRProduction& r) const {
+		if (productionId != r.productionId)
+			return productionId < r.productionId;
+		if (pos != r.pos)
+			return pos < r.pos;
+		return lookAhead < r.lookAhead;
+	}
+	bool operator==(const LRProduction& r)const {
+		return productionId == r.productionId && pos == r.pos && lookAhead == r.lookAhead;
+	}
 };
 
 #endif //_LRPRODUCTION_H

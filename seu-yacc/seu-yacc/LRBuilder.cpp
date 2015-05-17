@@ -14,13 +14,14 @@ int LRBuilder::build() {
 	auto& production = productionManager.buildProduction(startName, { startToken.name });
 	int id = productionManager.getProductionID(production);
 	auto& endToken = tokenManager.buildToken("$", "", LEFT, "");
-	LRProduction lrProduction{ id, 0, { endToken } }; //S' -> .s, $
+	int endId = tokenManager.getTokenId(endToken.name);
+	LRProduction lrProduction{ id, 0, endId}; //S' -> .s, $
 	startState = buildState({lrProduction});
 	return 0;
 }
 
 
-LRState LRBuilder::buildState(const vector<LRProduction> initProduction) {
+int LRBuilder::buildState(const vector<LRProduction> initProduction) {
 	//build Closure
 	LRState state{ initProduction, {} };
 	while (true) {
@@ -33,15 +34,53 @@ LRState LRBuilder::buildState(const vector<LRProduction> initProduction) {
 					const auto& nextProdutions = productionManager.getProductions((NonterminalToken&)nextToken);
 					for (const auto& nextProdution : nextProdutions) {
 						int id = productionManager.getProductionID(nextProdution);
-						LRProduction nextLR{ id, 0, {} };//TODO first
+						vector<int> tokenids;
+						if (lrproduction.pos + 1 < (int)prooduction.right.size()) {
+							int tid = tokenManager.getTokenId(prooduction.right[lrproduction.pos + 1].name);
+							tokenids.push_back(tid);
+						}
+						tokenids.push_back(lrproduction.lookAhead);
+						const auto& nextFirsts = getFirst(tokenids);
+						for (auto& nextFirst : nextFirsts) {
+							LRProduction nextLR{ id, 0, nextFirst};
+							if (find(state.productions.begin(), state.productions.end(), nextLR) == state.productions.end()) {
+								newProduction = true;
+								state.productions.push_back(nextLR);
+							}
+						}
+
 					}
 				}
 			}
 		}
+		if (!newProduction) {
+			break;
+		}
 	}
+	int sid = findState(state);
+	if (sid != -1) {
+		return sid;
+	}
+	// build GOTO
+	map<Token, vector<LRProduction>> trans;
+	for (const auto& lrproduction : state.productions) {
+		const auto& prooduction = productionManager.getProduction(lrproduction.productionId);
+		if (lrproduction.pos < (int)prooduction.right.size()) {
+			const auto& nextToken = prooduction.right[lrproduction.pos];
+			trans[nextToken].push_back(lrproduction);
+		}
+		else {//TODO X -> abc.
 
-
-	return LRState();
+		}
+	}
+	for (const auto& tran : trans) {
+		const auto& token = tran.first;
+		const auto& productions = tran.second;
+		state.action[token] = buildState(productions);
+	}
+	int id = lrstatus.size();
+	lrstatus[state] = id;
+	return id;
 }
 
 
@@ -101,4 +140,31 @@ int LRBuilder::initFirst() {
 	}
 
 	return 0;
+}
+
+
+vector<int> LRBuilder::getFirst(const vector<int>& tokens) {
+	vector<int> result;
+	for (auto& token : tokens) {
+		const auto& fi = first[token];
+		result.insert(result.end(), fi.begin(), fi.end());
+		if (!nullable[token]) {
+			break;
+		}
+	}
+
+
+	sort(result.begin(), result.end());
+	result.erase(unique(result.begin(), result.end()), result.end());
+	
+	return result;
+}
+
+
+int LRBuilder::findState(const LRState& state) {
+	for (const auto& s : lrstatus) {
+		if (s.first.productions == state.productions)
+			s.second;
+	}
+	return -1;
 }

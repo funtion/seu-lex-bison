@@ -19,9 +19,11 @@ public:
 	int build();
 	
 private:
-	LRState buildState(vector<LRProduction> initProduction);
+	int buildState(vector<LRProduction> initProduction);
 public:
-	LRState startState;
+	int startState;
 	int initFirst();
+	vector<int> getFirst(const vector<int>& tokens);
+	int findState(const LRState& state);
 };
 
