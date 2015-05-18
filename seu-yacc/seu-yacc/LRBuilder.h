@@ -5,6 +5,18 @@
 #include "LRState.h"
 #include "TOKEN.h"
 
+enum LRAction {
+	SHIFT,
+	REDUCE,
+	ACCEPT,
+	ERROR
+};
+
+struct LRTableItem{
+	LRAction action;
+	int target;
+};
+
 class LRBuilder {
 public:
 	LRBuilder(TokenManager&, ProductionManager&);
