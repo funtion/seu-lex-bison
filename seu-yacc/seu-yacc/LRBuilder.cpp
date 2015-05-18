@@ -205,9 +205,17 @@ void LRBuilder::buildTable() {
 					row[lrProduction.lookAhead].action = LRAction::ACCEPT;
 				}
 				else {
-					//TODO deal amibigous grammer
-					row[lrProduction.lookAhead].action = LRAction::REDUCE;
-					row[lrProduction.lookAhead].target = lrProduction.productionId;
+					if (row[lrProduction.lookAhead].action = LRAction::ERROR) {
+						row[lrProduction.lookAhead].action = LRAction::REDUCE;
+						row[lrProduction.lookAhead].target = lrProduction.productionId;
+					}
+					else if (row[lrProduction.lookAhead].action = LRAction::SHIFT) {
+						//TODO shift/reduce conflict
+					}
+					else if (row[lrProduction.lookAhead].action = LRAction::SHIFT) {
+						//TODO shift/shift conflict
+					}
+					
 				}
 			}
 		}
