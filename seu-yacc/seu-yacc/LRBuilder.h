@@ -8,6 +8,7 @@
 enum LRAction {
 	SHIFT,
 	REDUCE,
+	GOTO,
 	ACCEPT,
 	ERROR
 };
@@ -32,10 +33,12 @@ public:
 	
 private:
 	int buildState(vector<LRProduction> initProduction);
+	void buildTable();
 public:
 	int startState;
 	int initFirst();
 	vector<int> getFirst(const vector<int>& tokens);
 	int findState(const LRState& state);
+	vector<vector<LRTableItem>> lrTable;
 };
 

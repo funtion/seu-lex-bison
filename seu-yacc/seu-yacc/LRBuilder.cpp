@@ -17,6 +17,7 @@ int LRBuilder::build() {
 	int endId = tokenManager.getTokenId(endToken.name);
 	LRProduction lrProduction{ id, 0, endId}; //S' -> .s, $
 	startState = buildState({lrProduction});
+	buildTable();
 	return 0;
 }
 
@@ -167,4 +168,49 @@ int LRBuilder::findState(const LRState& state) {
 			s.second;
 	}
 	return -1;
+}
+
+void LRBuilder::buildTable() {
+	const int stateCnt = lrstatus.size();
+	//initialize the table,set all state to error
+	for (int i = 0; i < stateCnt; i++) {
+		lrTable.push_back(vector<LRTableItem>(stateCnt));
+		auto& row = lrTable.back();
+		for (int j = 0; j < stateCnt; j++) {
+			row[j].action = ERROR;
+			row[j].target = -1;
+		}
+	}
+	//set table items
+	for (const auto& stateWithId : lrstatus) {
+		auto& state = stateWithId.first;
+		auto& id = stateWithId.second;
+		auto& row = lrTable[id];
+		for (auto& trans : state.action) {
+			auto& token = trans.first;
+			auto& target = trans.second;
+			int tokenId = tokenManager.getTokenId(token.name);
+			if (tokenManager.isTerminal(token)) {
+				row[tokenId].action = LRAction::SHIFT;
+			}
+			else {
+				row[tokenId].action = LRAction::GOTO;
+			}
+			row[tokenId].target = target;
+		}
+		for (auto& lrProduction : state.productions) {
+			const auto& production = productionManager.getProduction(lrProduction.productionId);
+			if (lrProduction.pos == production.right.size()) {// s -> abc.
+				if (production.left.name == startToken.name + "'") {//S' -> s.
+					row[lrProduction.lookAhead].action = LRAction::ACCEPT;
+				}
+				else {
+					//TODO deal amibigous grammer
+					row[lrProduction.lookAhead].action = LRAction::REDUCE;
+					row[lrProduction.lookAhead].target = lrProduction.productionId;
+				}
+			}
+		}
+	}
+
 }
