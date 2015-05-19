@@ -9,6 +9,14 @@ class LRState {
 public:    
 	vector<LRProduction> productions;
     map<Token,int> action;
+	bool operator<(const LRState& r)const {
+		for (int i = 0; i < (int)min(productions.size(), r.productions.size()); i++) {
+			if (!(productions[i] == r.productions[i])) {
+				return productions[i] < r.productions[i];
+			}
+		}
+		return productions.size() < r.productions.size();
+	}
 };
 
 #endif //_LRSTATE_H

@@ -5,6 +5,7 @@
 #define _TOKEN_H
 enum Associativity
 {
+	NONE,
 	LEFT,
 	RIGHT
 };
