@@ -48,3 +48,18 @@ int CompilerGenerater::generate(const string& tplPath, const string& outPath) {
 	fclose(outFile);
 	return 0;
 }
+int CompilerGenerater::generateTableH(const string& outPath) {
+	FILE* outFile = fopen(outPath.c_str(), "w");
+	stringstream stream;
+	stream << "#ifndef __TABLE_H";
+	stream << "#define __TABLE_H";
+	for (auto& token : reader.tokenManager.tokens) {
+		stream << "#define " << token.first << " " << token.second << '\n';
+	}
+	stream << "#endif";
+	string s;
+	stream >> s;
+	fprintf(outFile, "%s", s.c_str());
+	fclose(outFile);
+	return 0;
+}
