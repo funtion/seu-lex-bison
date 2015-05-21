@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "regex.h"
 
 #ifndef _NFA_H
 #define _NFA_H
@@ -41,6 +42,12 @@ struct  NFA
 	NFA_STATE_ID initial;
 	NFA_STATE_ID accept;
 
+	NFA()
+	{
+		initial = -1;
+		accept = -1;
+	}
+
 	NFA(NFA_STATE_ID ini, NFA_STATE_ID acc)
 	{
 		initial = ini;
@@ -54,27 +61,38 @@ struct  NFA
 void ini_nfa_table(NFA_TABLE table);
 
 /* creat a nfa state */
-void creat_nfa_state(NFA_TABLE table, NFA_STATE_ID id);
+NFA_STATE_ID creat_nfa_state(NFA_TABLE table, NFA_STATE_ID *id);
 /* add an epsilon edge between two state */
 void nfa_epsilon_edge(NFA_TABLE table, NFA_STATE_ID s1, NFA_STATE_ID s2);
 /* add a one-char edge between two states */
 void nfa_c_edge(NFA_TABLE table, NFA_STATE_ID s1, NFA_STATE_ID s2, char c);
 
+
 /* creat a epsilon nfa */
-NFA creat_nfa(NFA_TABLE table, NFA_STATE_ID id);	
+NFA creat_nfa(NFA_TABLE table, NFA_STATE_ID *id);	
 /* creat a one-char nfa */	
-NFA creat_nfa_c(NFA_TABLE table, NFA_STATE_ID id, char c);	
+NFA creat_nfa_c(NFA_TABLE table, NFA_STATE_ID *id, char c);	
+
 
 /* concatenation */
 NFA nfa_concat(NFA_TABLE table, NFA first, NFA second);
 /* union */
-NFA nfa_union(NFA_TABLE table, NFA_STATE_ID id, NFA first, NFA second);
+NFA nfa_union(NFA_TABLE table, NFA_STATE_ID *id, NFA first, NFA second);
+/* kleen star */
+NFA nfa_star(NFA_TABLE table, NFA_STATE_ID *id, NFA n);
+/* postive clocure */
+NFA nfa_pos_clo(NFA_TABLE table, NFA_STATE_ID *id, NFA n);
+/* zero or one */
+NFA nfa_zero_one(NFA_TABLE table, NFA_STATE_ID *id, NFA n);
 
-
+/*          */
+void regex_to_nfa(queue<RE> &regex, NFA_TABLE table, NFA_STATE_ID *id);
+void foo(NFA_TABLE table, NFA_STATE_ID *id, re_type op, stack<NFA> &nfa);
 
 /*
   for test
 */
+
 void print_nfa_edge(NFA_EDGE *edge);
 void print_nfa_state(NFA_TABLE table, NFA nfa);
 void print_nfa_table(NFA_TABLE table, int col);

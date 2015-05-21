@@ -9,9 +9,12 @@
 
 #include <stdio.h>
 #include <tchar.h>
+#include <ctype.h>
 
 
 
 // TODO: reference additional headers your program requires here
 #include <iostream>
+#include <queue>
+#include <stack>
 using namespace std;
