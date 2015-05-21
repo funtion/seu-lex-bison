@@ -83,5 +83,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />
+    <None Include="result.tpl" />
   </ItemGroup>
 </Project>
