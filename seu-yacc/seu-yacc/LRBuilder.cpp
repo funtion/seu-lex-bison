@@ -18,10 +18,6 @@ int LRBuilder::build() {
 	LRProduction lrProduction{ id, 0, endId}; //S' -> .s, $
 	startState = buildState({lrProduction});
 	buildTable();
-	FILE* tpl = fopen("result.tpl", "r");
-	FILE* result = fopen("compiler.cpp", "w");
-	fclose(tpl);
-	fclose(result);
 	return 0;
 }
 
@@ -226,5 +222,3 @@ void LRBuilder::buildTable() {
 	}
 
 }
-
-
