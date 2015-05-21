@@ -19,6 +19,7 @@ struct LRTableItem{
 };
 
 class LRBuilder {
+	friend class CompilerGenerater;
 public:
 	LRBuilder(TokenManager&, ProductionManager&);
 private:
@@ -40,5 +41,6 @@ public:
 	vector<int> getFirst(const vector<int>& tokens);
 	int findState(const LRState& state);
 	vector<vector<LRTableItem>> lrTable;
+	
 };
 

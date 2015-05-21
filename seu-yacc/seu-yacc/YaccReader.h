@@ -3,6 +3,7 @@
 #include "TokenManager.h"
 class YaccReader
 {
+	friend class CompilerGenerater;
 public:
 	YaccReader(FILE*, TokenManager& tokenManager, ProductionManager& productionManager);
 	~YaccReader();

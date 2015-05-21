@@ -1,9 +1,14 @@
-%s 
 /*user defined header*/
 %s 
 /*lr table*/
+%s
+/*productions*/
+%s
+/*yyparser*/
 #include <stack>
-using namespace std;
+#include <cstdio>
+#include "table.h"
+using std::stack;
 int yyParser(){
 	stack<int> st;
 	int currentState = 0;
@@ -41,5 +46,5 @@ int yyParser(){
 
 
 }
-
-%s /*user function*/
+/*user function*/
+%s 

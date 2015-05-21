@@ -51,7 +51,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <SDLCheck>true</SDLCheck>
+      <SDLCheck>false</SDLCheck>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -79,6 +79,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CompilerGenerater.h" />
     <ClInclude Include="LRBuilder.h" />
     <ClInclude Include="LRProduction.h" />
     <ClInclude Include="LRState.h" />
@@ -91,6 +92,9 @@
     <ClInclude Include="YaccReader.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CompilerGenerater.cpp">
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
+    </ClCompile>
     <ClCompile Include="LRBuilder.cpp" />
     <ClCompile Include="LRProduction.cpp" />
     <ClCompile Include="LRState.cpp" />
