@@ -10,9 +10,9 @@ void ini_nfa_table(NFA_TABLE table)
 
 
 /* creat a nfa state */
-void creat_nfa_state(NFA_TABLE table, NFA_STATE_ID id)
+NFA_STATE_ID creat_nfa_state(NFA_TABLE table, NFA_STATE_ID *id)
 {
-	// todo
+	return (*id)++;
 }
 
 /* add an epsilon edge between two state */
@@ -41,22 +41,24 @@ void nfa_c_edge(NFA_TABLE table, NFA_STATE_ID s1, NFA_STATE_ID s2, char c)
 
 
 /* creat a epsilon nfa */
-NFA creat_nfa(NFA_TABLE table, NFA_STATE_ID id)
+NFA creat_nfa(NFA_TABLE table, NFA_STATE_ID *id)
 {
-	creat_nfa_state(table, id);
-	creat_nfa_state(table, id+1);
-	nfa_epsilon_edge(table, id, id+1);
-	return NFA(id, id+1);
+	NFA_STATE_ID ini = creat_nfa_state(table, id);
+	NFA_STATE_ID acc = creat_nfa_state(table, id);
+	nfa_epsilon_edge(table, ini, acc);
+	return NFA(ini, acc);
 }
 
 /* creat a one-char nfa */	
-NFA creat_nfa_c(NFA_TABLE table, NFA_STATE_ID id, char c)
+NFA creat_nfa_c(NFA_TABLE table, NFA_STATE_ID *id, char c)
 {
-	creat_nfa_state(table, id);
-	creat_nfa_state(table, id+1);
-	nfa_c_edge(table, id, id+1, c);
-	return NFA(id, id+1);
+	NFA_STATE_ID ini = creat_nfa_state(table, id);
+	NFA_STATE_ID acc = creat_nfa_state(table, id);
+	nfa_c_edge(table, ini, acc, c);
+	return NFA(ini, acc);
 }
+
+
 
 /* concatenation */
 NFA nfa_concat(NFA_TABLE table, NFA first, NFA second)
@@ -66,12 +68,10 @@ NFA nfa_concat(NFA_TABLE table, NFA first, NFA second)
 }
 
 /* union */
-NFA nfa_union(NFA_TABLE table, NFA_STATE_ID id, NFA first, NFA second)
+NFA nfa_union(NFA_TABLE table, NFA_STATE_ID *id, NFA first, NFA second)
 {
-	NFA_STATE_ID ini = id;
-	NFA_STATE_ID acc = id+1;
-	creat_nfa_state(table, ini);	/* initial state */
-	creat_nfa_state(table, acc);	/* accept state */
+	NFA_STATE_ID ini = creat_nfa_state(table, id);
+	NFA_STATE_ID acc = creat_nfa_state(table, id);
 
 	nfa_epsilon_edge(table, ini, first.initial);
 	nfa_epsilon_edge(table, ini, second.initial);
@@ -79,6 +79,160 @@ NFA nfa_union(NFA_TABLE table, NFA_STATE_ID id, NFA first, NFA second)
 	nfa_epsilon_edge(table, second.accept, acc);
 
 	return NFA(ini, acc);
+}
+
+/* kleen star */
+NFA nfa_star(NFA_TABLE table, NFA_STATE_ID *id, NFA n)
+{
+	NFA_STATE_ID ini = creat_nfa_state(table, id);
+	NFA_STATE_ID acc = creat_nfa_state(table, id);
+
+	nfa_epsilon_edge(table, ini, acc);
+	nfa_epsilon_edge(table, ini, n.initial);
+	nfa_epsilon_edge(table, n.accept, n.initial);
+	nfa_epsilon_edge(table, n.accept, acc);
+
+	return NFA(ini, acc);
+}
+/* postive clocure */
+NFA nfa_pos_clo(NFA_TABLE table, NFA_STATE_ID *id, NFA n)
+{
+	NFA_STATE_ID ini = creat_nfa_state(table, id);
+	NFA_STATE_ID acc = creat_nfa_state(table, id);
+
+	nfa_epsilon_edge(table, ini, n.initial);
+	nfa_epsilon_edge(table, n.accept, n.initial);
+	nfa_epsilon_edge(table, n.accept, acc);
+
+	return NFA(ini, acc);
+}
+
+/* zero or one */
+NFA nfa_zero_one(NFA_TABLE table, NFA_STATE_ID *id, NFA n)
+{
+	NFA_STATE_ID ini = creat_nfa_state(table, id);
+	NFA_STATE_ID acc = creat_nfa_state(table, id);
+
+	nfa_epsilon_edge(table, ini, acc);
+	nfa_epsilon_edge(table, ini, n.initial);
+	nfa_epsilon_edge(table, n.accept, acc);
+
+	return NFA(ini, acc);
+}
+
+/*
+
+
+
+*/
+void regex_to_nfa(queue<RE> &regex, NFA_TABLE table, NFA_STATE_ID *id)
+{
+	stack<re_type> opstk;
+	stack<NFA> nfa;
+	RE re;
+	NFA temp;
+
+	while (!regex.empty()) {
+		re = regex.front();
+		regex.pop();
+
+		switch (re.type) {
+		case character:
+			temp = creat_nfa_c(table, id, re.c);
+			printf("nfa  : push [%d %d]\n", temp.initial, temp.accept); ////////////
+			nfa.push(temp);
+			break;
+		case right_pare:
+			while (1) {
+				re_type op = opstk.top();
+				opstk.pop();
+				printf("opstk: pop "); 	/////////////////////
+				print_re_type(op); 		/////////////////////
+				if (op == left_pare)
+					break;
+				else
+					foo(table, id, op, nfa);
+			}
+			break;
+		case left_pare:
+			opstk.push(left_pare);
+			printf("opstk: push "); /////////////////////
+			print_re_type(re.type); /////////////////////
+			break;
+		default:
+			while (!opstk.empty() &&
+					re_prio(re.type) < re_prio(opstk.top()) ) {
+				re_type op = opstk.top();
+				opstk.pop();
+				printf("opstk: pop "); 	/////////////////////
+				print_re_type(op); 		/////////////////////
+				foo(table, id, op, nfa);
+			}
+			opstk.push(re.type);
+			printf("opstk: push "); /////////////////////
+			print_re_type(re.type); /////////////////////
+		}
+	}
+
+	while (!opstk.empty()) {
+		re_type op = opstk.top();
+		opstk.pop();
+		printf("opstk: pop "); 	/////////////////////
+		print_re_type(op); 		/////////////////////
+		foo(table, id, op, nfa);
+	}
+}
+
+
+void foo(NFA_TABLE table, NFA_STATE_ID *id, 
+         re_type op, stack<NFA> &nfa)
+{
+	NFA nfa1;
+	NFA nfa2;
+	NFA nfa3;
+
+	switch (op) {
+	case concat :
+		nfa1 = nfa.top();
+		nfa.pop();
+		nfa2 = nfa.top();
+		nfa.pop();
+		printf("nfa  : pop [%d %d]\n", nfa1.initial, nfa1.accept); /////////////
+		printf("nfa  : pop [%d %d]\n", nfa2.initial, nfa2.accept); /////////////
+		nfa3 = nfa_concat(table, nfa2, nfa1);
+		printf("nfa  : push [%d %d]\n", nfa3.initial, nfa3.accept); /////////////
+		nfa.push( nfa3);
+		break;
+	case uni :
+		nfa1 = nfa.top();
+		nfa.pop();
+		nfa2 = nfa.top();
+		nfa.pop();
+		printf("nfa  : pop [%d %d]\n", nfa1.initial, nfa1.accept); /////////////
+		printf("nfa  : pop [%d %d]\n", nfa2.initial, nfa2.accept); /////////////
+		nfa3 = nfa_union(table, id, nfa2, nfa1);
+		printf("nfa  : push [%d %d]\n", nfa3.initial, nfa3.accept); /////////////
+		nfa.push( nfa3);
+		break;
+	case star :
+		nfa1 = nfa.top();
+		nfa.pop();
+		printf("nfa  : pop [%d %d]\n", nfa1.initial, nfa1.accept); /////////////
+		nfa3 = nfa_star(table, id, nfa1);
+		printf("nfa  : push [%d %d]\n", nfa3.initial, nfa3.accept); /////////////
+		nfa.push( nfa3 );
+		break;
+	case pos_clo :
+		nfa1 = nfa.top();
+		nfa.pop();
+		nfa.push( nfa_pos_clo(table, id, nfa1));
+		break;
+	case zero_one :
+		nfa1 = nfa.top();
+		nfa.pop();
+		nfa.push( nfa_zero_one(table, id, nfa1));
+		break;
+	} /* end of swith op */
 }
 
 
