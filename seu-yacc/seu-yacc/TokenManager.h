@@ -9,7 +9,7 @@
 class TokenManager {
 	friend class CompilerGenerater;
 public: 
-	TerminalToken buildToken(const string& name, const string& type, Associativity associativity, const string& precedence);
+	TerminalToken buildToken(const string& name, const string& type, Associativity associativity, const int& precedence);
 	NonterminalToken buildToken(const string& name);
 private:
 	map<string, int> tokens;
@@ -28,6 +28,7 @@ public:
 		return tokens[token];
 	}
 
+	int comp(int left, int right);
 };
 
 #endif //_TOKENMANAGER_H

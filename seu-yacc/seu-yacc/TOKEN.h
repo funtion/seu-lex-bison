@@ -27,7 +27,7 @@ class TerminalToken : public Token{
 public:
 	string type;
 	Associativity associativity;
-	string precedence;
+	int precedence;
 };
 
 class NonterminalToken : public Token {

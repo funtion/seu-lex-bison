@@ -15,7 +15,7 @@
  */
 
 
-TerminalToken TokenManager::buildToken(const string& name, const string& type, Associativity associativity, const string& precedence) {
+TerminalToken TokenManager::buildToken(const string& name, const string& type, Associativity associativity, const int& precedence) {
 	if (tokens.find(name) == tokens.end()){
 		int id = tokens.size();
 		tokens[name] = id;
@@ -51,4 +51,21 @@ bool TokenManager::isTerminal(const string& token) {
 	const int id = tokens[token];
 	return terminals.find(id) == terminals.end();
 
+}
+
+
+int TokenManager::comp(int left, int right) {
+	if (terminals.find(left) == terminals.end()) {
+		return 0;
+	}
+	if (terminals.find(right) == terminals.end()) {
+		return 0;
+	}
+	if (terminals[left].precedence < terminals[right].precedence) {
+		return -1;
+	}
+	else if (terminals[left].precedence == terminals[right].precedence) {
+		return 0;
+	}
+	return 1;
 }
