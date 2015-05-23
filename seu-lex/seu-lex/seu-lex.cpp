@@ -7,9 +7,9 @@
 int _tmain(int argc, _TCHAR* argv[])
 {
 	// test_nfa();
-	//test_regex_check();
+	test_regex_check();
 	//test_preprocess();
-	test_regex2nfa();
+	//test_regex2nfa();
 	return 0;
 }
 

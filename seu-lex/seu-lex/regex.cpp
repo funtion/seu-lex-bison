@@ -22,45 +22,68 @@ int re_prio(re_type op)
 
 
 /* regex_check - check the syntax of a regular expression */
-/* 
-  TODO:
-  \
-  ""
-*/
 bool regex_check(char *regex)
 {
 	char c;
 	int parenthesis = 0;
 	int bracket = 0;
 	int brace = 0;
-	int quote = 0;
+	bool quote = false;
+	bool escape = false;
 
 	for (c = *regex; c != '\0'; regex++, c = *regex) {
+		if (escape) {
+			escape = false;
+			continue;
+		}
+
+		if (quote) {
+			if (c == '"')
+				quote = false;
+			continue;
+		}
+
 		switch (c) {
+		case '\\':
+			escape = true;
+			break;
+		case '"':
+			quote = true;
+			break;
 		case '(':
 			parenthesis++;
 			break;
 		case ')':
-			parenthesis--;
+			if (parenthesis > 0)
+				parenthesis--;
+			else
+				return false;
 			break;
 		case '[':
 			bracket++;
 			break;
 		case ']':
-			bracket--;
+			if (bracket)
+				bracket--;
+			else
+				return false;
 			break;
 		case '{':
 			brace++;
 			break;
 		case '}':
-			brace--;
+			if (brace)
+				brace--;
+			else
+				return false;
 			break;
 		}
 	}
 
-	if (parenthesis != 0 
-		| bracket != 0 
-		| brace != 0)
+	if (quote
+		|| parenthesis != 0 
+		|| bracket != 0 
+		|| brace != 0)
 		return false;
 	else
 		return true;
@@ -69,7 +92,7 @@ bool regex_check(char *regex)
 
 
 /*
-  pre proccessing
+  regex_preprocess
   transfer a expanded form regular expression to a queue of RE struct.
   remove all brackets, braces, quotes and so on.
 */
@@ -238,10 +261,3 @@ void print_re(RE *r)
 		print_re_type(r->type);
 	}
 }
-
-// void print_opstk(stack<re_type> opstk)
-// {
-// 	stack<re_type>::iterator i;
-// 	for (i = opstk.begin(); i != opstk.end(); i++)
-// 		print_re_type(opstk[i]);
-// }

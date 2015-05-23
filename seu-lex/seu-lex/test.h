@@ -22,7 +22,7 @@ void test_nfa(void)
 
 void test_regex_check()
 {
-	char *regex = "ab[a-z](t*";
+	char *regex = "ab[a-z])(t\"fsf\"*\0";
 	if (regex_check(regex))
 		printf("ok\n");
 	else
@@ -67,16 +67,11 @@ void test_regex2nfa()
 
 	printf("pre-proccessing...\n");
 	regex_preprocess(regex, re_queue);
-	printf("print the re_queue...\n");
-	// while (!re_queue.empty()) {
-	// 	print_re(&re_queue.front());
-	// 	re_queue.pop();
-	// }
-	printf("\n");
+//	printf("print the re_queue...\n");
 
-	printf("regex to nfa...\n");
+	printf("\nregex to nfa...\n");
 	regex_to_nfa(re_queue, table, &id);
-	printf("print nfa table...\n");
+	printf("\nprint nfa table...\n");
 	print_nfa_table(table, id);
 
 }
