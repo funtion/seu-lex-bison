@@ -48,6 +48,9 @@
     <ClInclude Include="LRBuilder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="CompilerGenerater.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -80,8 +83,12 @@
     <ClCompile Include="LRBuilder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="CompilerGenerater.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />
+    <None Include="result.tpl" />
   </ItemGroup>
 </Project>
