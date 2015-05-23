@@ -86,8 +86,23 @@ NFA nfa_pos_clo(NFA_TABLE table, NFA_STATE_ID *id, NFA n);
 NFA nfa_zero_one(NFA_TABLE table, NFA_STATE_ID *id, NFA n);
 
 /*          */
-void regex_to_nfa(queue<RE> &regex, NFA_TABLE table, NFA_STATE_ID *id);
+NFA regex_to_nfa(queue<RE> &regex, NFA_TABLE table, NFA_STATE_ID *id);
 void foo(NFA_TABLE table, NFA_STATE_ID *id, re_type op, stack<NFA> &nfa);
+
+NFA nfa_merge(NFA_TABLE table, NFA_STATE_ID *id, vector<NFA> v);
+
+
+/* closure */
+
+/* use a bool value to indicate whether it is taged */
+typedef pair<NFA_STATE_ID, bool> idpair;
+
+map<NFA_STATE_ID,bool> nfa_adj_e(NFA_TABLE table, NFA_STATE_ID id);
+map<NFA_STATE_ID,bool> nfa_e_closure(NFA_TABLE table, map<NFA_STATE_ID,bool> ids);
+
+NFA_STATE_ID nfa_adj_c(NFA_TABLE table, NFA_STATE_ID id, char c);
+map<NFA_STATE_ID,bool> nfa_cset(NFA_TABLE table, map<NFA_STATE_ID,bool> ids, char c);
+
 
 /*
   for test

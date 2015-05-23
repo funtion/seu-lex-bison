@@ -67,11 +67,20 @@ void test_regex2nfa()
 
 	printf("pre-proccessing...\n");
 	regex_preprocess(regex, re_queue);
-//	printf("print the re_queue...\n");
 
 	printf("\nregex to nfa...\n");
-	regex_to_nfa(re_queue, table, &id);
+	NFA nfa = regex_to_nfa(re_queue, table, &id);
 	printf("\nprint nfa table...\n");
 	print_nfa_table(table, id);
 
+	/* test closure *********************/
+	map<NFA_STATE_ID, bool> m0, m1;
+	m0.insert(idpair(nfa.initial, false));
+
+	m1 = nfa_e_closure(table, m0);
+	map<NFA_STATE_ID, bool>::iterator i;
+	printf("e-closure of s0: ");
+	for (i=m1.begin(); i!=m1.end(); i++)
+		printf("%d ", i->first);
 }
+

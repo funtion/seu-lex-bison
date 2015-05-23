@@ -125,7 +125,7 @@ NFA nfa_zero_one(NFA_TABLE table, NFA_STATE_ID *id, NFA n)
 
 
 */
-void regex_to_nfa(queue<RE> &regex, NFA_TABLE table, NFA_STATE_ID *id)
+NFA regex_to_nfa(queue<RE> &regex, NFA_TABLE table, NFA_STATE_ID *id)
 {
 	stack<re_type> opstk;
 	stack<NFA> nfa;
@@ -181,6 +181,8 @@ void regex_to_nfa(queue<RE> &regex, NFA_TABLE table, NFA_STATE_ID *id)
 		print_re_type(op); 		/////////////////////
 		foo(table, id, op, nfa);
 	}
+
+	return nfa.top();
 }
 
 
@@ -237,7 +239,117 @@ void foo(NFA_TABLE table, NFA_STATE_ID *id,
 
 
 /*
-  for test
+  nfa_merge
+  merge all nfas to one
+*/
+NFA nfa_merge(NFA_TABLE table, NFA_STATE_ID *id, vector<NFA> v)
+{
+	NFA_STATE_ID ini = creat_nfa_state(table, id);
+	NFA_STATE_ID acc = creat_nfa_state(table, id);
+
+	unsigned int i;
+	for (i=0; i<v.size(); i++) {
+		nfa_epsilon_edge(table, ini, v[i].initial);
+		nfa_epsilon_edge(table, v[i].accept, acc);
+	}
+	
+	return NFA(ini, acc);
+}
+
+
+
+/*
+  closure
+
+*/
+
+/* 
+  nfa_adj_e
+  get all nfa states can be arrived via epsilon edge from give states
+*/
+map<NFA_STATE_ID, bool> nfa_adj_e(NFA_TABLE table, NFA_STATE_ID id)
+{
+	map<NFA_STATE_ID, bool> m;
+	NFA_EDGE *e;
+	for (e = table[id].first_edge; e != NULL; e = e->next) {
+		if (e->cost.epsilon)
+			m.insert(idpair(e->adjvex, false));
+	}
+	return m;
+}
+
+
+/*
+  nfa_e_closure
+  the epsilon closure of a set of nfa states
+*/
+map<NFA_STATE_ID, bool> nfa_e_closure(NFA_TABLE table, map<NFA_STATE_ID, bool> ids)
+{
+	map<NFA_STATE_ID, bool> temp;
+	map<NFA_STATE_ID, bool>::iterator i;
+	bool all_taged;
+
+	for (i=ids.begin(); i!=ids.end(); i++)	/* make all untaged */
+		i->second = false;
+
+	while(1) {
+		all_taged = true;
+		for (i=ids.begin(); i!=ids.end(); i++)
+			if (!i->second) {
+				all_taged = false;
+				break;
+			}
+		if (all_taged) 
+			return ids;
+
+		i->second = true;
+		temp = nfa_adj_e(table, i->first);
+		for (i=temp.begin(); i!=temp.end(); i++)
+			ids.insert(*i);
+	}
+}
+
+/*
+  nfa_adj_c
+  get the nfa states can be arrived via c edge from give states 
+*/
+NFA_STATE_ID nfa_adj_c(NFA_TABLE table, NFA_STATE_ID id, char c)
+{
+	NFA_EDGE *e;
+	for (e = table[id].first_edge; e != NULL; e = e->next)
+		if (! e->cost.epsilon && e->cost.c == c)
+			return e->adjvex;
+	return -1;	
+}
+
+/* 
+  nfa_cset
+  get the set arrived via character from given set.
+  used when nfa to dfa.
+*/
+map<NFA_STATE_ID, bool> nfa_cset(NFA_TABLE table, map<NFA_STATE_ID, bool> ids, char c)
+{
+	map<NFA_STATE_ID, bool> m;
+	map<NFA_STATE_ID, bool>::iterator i;
+	NFA_STATE_ID adj;
+	for (i=ids.begin(); i!=ids.end(); i++) {
+		adj = nfa_adj_c(table, i->first, c);
+		if (adj != -1)
+			m.insert(idpair(adj, false));
+	}
+		
+	return m;
+}
+
+
+
+
+
+
+
+
+/*
+  FOR TEST
 */
 void print_nfa_edge(NFA_EDGE *edge)
 {

@@ -79,6 +79,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="dfa.h" />
     <ClInclude Include="nfa.h" />
     <ClInclude Include="regex.h" />
     <ClInclude Include="stdafx.h" />
@@ -86,6 +87,7 @@
     <ClInclude Include="test.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="dfa.cpp" />
     <ClCompile Include="nfa.cpp" />
     <ClCompile Include="regex.cpp" />
     <ClCompile Include="seu-lex.cpp" />

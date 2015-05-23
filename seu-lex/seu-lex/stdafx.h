@@ -17,4 +17,7 @@
 #include <iostream>
 #include <queue>
 #include <stack>
+#include <list>
+#include <set>
+#include <map>
 using namespace std;
