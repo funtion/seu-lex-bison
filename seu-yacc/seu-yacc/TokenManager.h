@@ -1,9 +1,7 @@
-#include "stdafx.h"
-#include "TOKEN.h"
-
 #ifndef _TOKENMANAGER_H
 #define _TOKENMANAGER_H
-
+#include "stdafx.h"
+#include "TOKEN.h"
 
 
 class TokenManager {
