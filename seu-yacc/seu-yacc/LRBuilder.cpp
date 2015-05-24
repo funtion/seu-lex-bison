@@ -11,7 +11,7 @@ LRBuilder::LRBuilder(TokenManager& tokenManager, ProductionManager& productionMa
 //build LR(1) status
 int LRBuilder::build() {
 	string& startName = startToken.name + "'";
-	auto& production = productionManager.buildProduction(startName, { startToken.name });
+	auto& production = productionManager.buildProduction(startName, { startToken.name },"");
 	int id = productionManager.getProductionID(production);
 	auto& endToken = tokenManager.buildToken("$", "", LEFT, 0);
 	int endId = tokenManager.getTokenId(endToken.name);

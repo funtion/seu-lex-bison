@@ -13,12 +13,13 @@
  * @param right
  * @return Procudtion
  */
-Production ProductionManager::buildProduction(string left, vector<string> right) {
+Production ProductionManager::buildProduction(string left, vector<string> right,const string& action) {
 	Production production;
 	production.left = tokenManager.buildToken(left);
 	for (const auto& r : right) {
 		production.right.push_back(tokenManager.buildToken(r));
 	}
+	production.action = action;
 	if (productionsID.find(production) == productionsID.end()) {
 		int id = productions.size();
 		productionsID[production] = id;
