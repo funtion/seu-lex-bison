@@ -31,7 +31,7 @@ int YaccReader::read()
 	}
 
 	readtoken(tokenDefine);
-	readproduct(productionDefine);
+//	readproduct(productionDefine);
 	return 0;
 }
 
@@ -88,7 +88,6 @@ void YaccReader::readtoken(string tokenDefine)
 			while ((begin = temp.find(seg)) !=temp.npos)
 			{			
 				ttoken.name= temp.substr(0, begin);
-				cout << "name:" << ttoken.name << endl;
 				tokenManager.buildToken(ttoken.name,ttoken.type,ttoken.associativity,ttoken.precedence);
 				ttoken.name = "";
 				temp = temp.substr(begin + 1, temp.length() - begin - 1);
@@ -98,7 +97,6 @@ void YaccReader::readtoken(string tokenDefine)
 				if (temp[i] != '\n')
 					ttoken.name += temp[i];
 			}
-			cout << "name:" << ttoken.name<<endl;
 			tokenManager.buildToken(ttoken.name, ttoken.type, ttoken.associativity, ttoken.precedence);
 			ttoken.name = "";
 		}
@@ -172,20 +170,23 @@ void YaccReader::readtoken(string tokenDefine)
 
 		}
 	} //end of for
-	/*为ttoken添加type*/
+	/*为终结符添加type并根据vector<Type>types构造非终结符*/
+	//for (auto& i : tokenManager.allToken())
+	//{
+	//	cout << "\n----------------------\n" <<i.first<< "--"<<i.second;
+	//}
 	for (int i = 0; i < types.size(); i++)
 	{
 		string name=types[i].tokennames;
-		for (int j = 0; j < unions.size(); j++)
+		string type = types[i].typenames;
+		if (tokenManager.isTerminal(name))
 		{
-			if (types[i].typenames == unions[j].typenames)
-			{
-				string type = unions[j].type;
 				tokenManager.setType(name, type);
-				cout << "\n name:" << name << "type:" << type<<endl;
+			cout << name << "   ---have found in terminals"<<endl;
 			}
+		else
+			tokenManager.buildToken(name, type);		 //构造非中介符，存入map<int, NonterminalToken> nonterminals;中
 		}	
-	}
 
 
 	/*下面的代码用来测试*/
@@ -204,6 +205,7 @@ void YaccReader::readproduct(string productionDefine)
 	string action = "";
 	string righttemp="";
 	int flag = 1;//标记一个产生式的状态
+	int flag2;//临时的。用于解析注释时来临时存放flag
 	string buffer[100]; //用来存放产生式左边的内容，供测试以及查找start
 	int n = 0;
 	string temp = productionDefine;
@@ -235,9 +237,9 @@ void YaccReader::readproduct(string productionDefine)
 		else if (flag ==2 && (temp[i] == '|'))//状态2遇到|
 		{
 			productionManager.buildProduction(left, right, action);
-		//	cout << "\nleft:" << left << "----right:";
-			//for (int i = 0; i < right.size(); i++)
-			//	cout << right[i]<<endl;
+		/*	cout << "\nleft:" << left << "----right:";
+			for (int i = 0; i <right.size(); i++)
+				cout << right[i]<<" ";*/
 			right.clear();
 			
 		}
@@ -246,9 +248,9 @@ void YaccReader::readproduct(string productionDefine)
 			productionManager.buildProduction(left, right, action);
 			buffer[n] = left;
 			n++;
-		//	cout << "\nleft:" << left << "----right:";
-		//	for (int i = 0; i < right.size(); i++)
-			//	cout << right[i] << endl;
+			/*	cout << "\nleft:" << left << "----right:";
+				for (int i = 0; i <right.size(); i++)
+				cout << right[i] <<" ";*/
 			left = "";
 			action = "";
 			right.clear();
@@ -266,26 +268,30 @@ void YaccReader::readproduct(string productionDefine)
 		{
 			flag = 2;
 		}
+		else if (temp[i] == '/'&&temp[i + 1] == '*')
+		{
+			flag2 = flag;
+			flag = 100;   //在还没读到*/之前不做任何事
+		}
+		else if (temp[i] == '*'&&temp[i + 1] == '/')
+		{
+			flag = flag2;
+		}
 
 	}//end of read
 	/*处理最后一个产生式（不以分号结尾）*/
 	if (left != "")
 	{
 		productionManager.buildProduction(left, right, action);
+	/*	cout << "\nleft:" << left << "----right:";
+		for (int i = 0; i < right.size(); i++)
+			cout << right[i] << " ";*/
 		buffer[n] = left;
 		left = "";
 		action = "";
 		right.clear();
 	}
-
-	start = buffer[0];
-	//cout << start;
-	//for (int i = 0; i <= n; i++)
-	//{
-	//	//cout << "  " << buffer[i] << endl;
-	//}
-
-
+	start = buffer[0];//标记开始符
 	/*for (const auto& i: productionManager.all())
 	{
 		cout << i.first.left.name << i.first.right.size();

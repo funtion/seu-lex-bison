@@ -96,12 +96,16 @@ NFA nfa_merge(NFA_TABLE table, NFA_STATE_ID *id, vector<NFA> v);
 
 /* use a bool value to indicate whether it is taged */
 typedef pair<NFA_STATE_ID, bool> idpair;
+typedef map<NFA_STATE_ID, bool> idmap;
 
-map<NFA_STATE_ID,bool> nfa_adj_e(NFA_TABLE table, NFA_STATE_ID id);
-map<NFA_STATE_ID,bool> nfa_e_closure(NFA_TABLE table, map<NFA_STATE_ID,bool> ids);
+/* get the char set of a nfa */
+set<char> nfa_char_set(NFA_TABLE table, NFA nfa);
+
+idmap nfa_adj_e(NFA_TABLE table, NFA_STATE_ID id);
+idmap nfa_e_closure(NFA_TABLE table, idmap ids);
 
 NFA_STATE_ID nfa_adj_c(NFA_TABLE table, NFA_STATE_ID id, char c);
-map<NFA_STATE_ID,bool> nfa_cset(NFA_TABLE table, map<NFA_STATE_ID,bool> ids, char c);
+idmap nfa_cset(NFA_TABLE table, idmap ids, char c);
 
 
 /*
@@ -111,7 +115,6 @@ map<NFA_STATE_ID,bool> nfa_cset(NFA_TABLE table, map<NFA_STATE_ID,bool> ids, cha
 void print_nfa_edge(NFA_EDGE *edge);
 void print_nfa_state(NFA_TABLE table, NFA nfa);
 void print_nfa_table(NFA_TABLE table, int col);
-
 
 
 #endif

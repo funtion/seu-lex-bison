@@ -50,7 +50,11 @@ bool TokenManager::isTerminal(const Token& token) {
 
 bool TokenManager::isTerminal(const string& token) {
 	const int id = tokens[token];
-	return terminals.find(id) != terminals.end();
+	if (terminals[id].name==token)
+	{
+		return true;
+	}
+	return false;
 
 }
 

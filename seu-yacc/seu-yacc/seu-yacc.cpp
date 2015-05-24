@@ -23,9 +23,9 @@ int _tmain(int argc, char* argv[])
 	ProductionManager productionManager(tokenManager);
 	YaccReader reader(file, tokenManager, productionManager);
 	reader.read();
-	//cout << "this is Header: "<<reader.tokenDefine;
+	cout << "this is Header: "<<reader.tokenDefine;
 	LRBuilder builder(tokenManager,productionManager);
-	cout << "[!!!!]start is set to e" << endl;
+	out << "[!!!!]start is set to e" << endl;
 	builder.build("e");
 	
 	CompilerGenerater generater(reader,builder);
