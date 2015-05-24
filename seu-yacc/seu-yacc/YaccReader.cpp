@@ -171,10 +171,6 @@ void YaccReader::readtoken(string tokenDefine)
 		}
 	} //end of for
 	/*为终结符添加type并根据vector<Type>types构造非终结符*/
-	//for (auto& i : tokenManager.allToken())
-	//{
-	//	cout << "\n----------------------\n" <<i.first<< "--"<<i.second;
-	//}
 	for (int i = 0; i < types.size(); i++)
 	{
 		string name=types[i].tokennames;
@@ -182,12 +178,14 @@ void YaccReader::readtoken(string tokenDefine)
 		if (tokenManager.isTerminal(name))
 		{
 				tokenManager.setType(name, type);
-			cout << name << "   ---have found in terminals"<<endl;
-			}
+		}
 		else
 			tokenManager.buildToken(name, type);		 //构造非中介符，存入map<int, NonterminalToken> nonterminals;中
-		}	
-
+	}	
+	for (auto& i : tokenManager.allNonterminal())
+	{
+		cout << "\n----------------------\n" << i.first << "--" << i.second.name;
+	}
 
 	/*下面的代码用来测试*/
 
