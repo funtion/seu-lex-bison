@@ -13,12 +13,18 @@
  * @param right
  * @return Procudtion
  */
-Production ProductionManager::buildProduction(string left, vector<string> right) {
+Production ProductionManager::buildProduction(string left, vector<string> right,const string& action) {
 	Production production;
 	production.left = tokenManager.buildToken(left);
 	for (const auto& r : right) {
-		production.right.push_back(tokenManager.buildToken(r));
+		if (tokenManager.isTerminal(r)) {
+			production.right.push_back(tokenManager.buildToken(r, "", NONE, 0));
+		}
+		else {
+			production.right.push_back(tokenManager.buildToken(r));
+		}
 	}
+	production.action = action;
 	if (productionsID.find(production) == productionsID.end()) {
 		int id = productions.size();
 		productionsID[production] = id;
@@ -40,6 +46,13 @@ int ProductionManager::getProductionID(const Production& procudtion) {
 */
 vector<Production> ProductionManager::getProductions(const NonterminalToken& noterminal) {
 	//TODO all production of a no terminal
-	return{};
+	vector<Production> result;
+	int id = tokenManager.getTokenId(noterminal.name);
+	for (const auto& p : productions) {
+		if (p.first == id) {
+			result.push_back(p.second);
+		}
+	}
+	return result;
 
 }

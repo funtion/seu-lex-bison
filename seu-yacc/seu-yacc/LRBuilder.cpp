@@ -9,15 +9,16 @@ LRBuilder::LRBuilder(TokenManager& tokenManager, ProductionManager& productionMa
 
 
 //build LR(1) status
-int LRBuilder::build() {
-	string& startName = startToken.name + "'";
-	auto& production = productionManager.buildProduction(startName, { startToken.name });
+int LRBuilder::build(const string& start) {
+	string& startName = start + "'";
+	auto& production = productionManager.buildProduction(startName, { start },"");
 	int id = productionManager.getProductionID(production);
 	auto& endToken = tokenManager.buildToken("$", "", LEFT, 0);
 	int endId = tokenManager.getTokenId(endToken.name);
 	LRProduction lrProduction{ id, 0, endId}; //S' -> .s, $
+	initFirst();
 	startState = buildState({lrProduction});
-	buildTable();
+	buildTable(start);
 	return 0;
 }
 
@@ -96,7 +97,7 @@ int LRBuilder::initFirst() {
 		bool changed = false;
 		for (auto& prodictionWithID : allProduction) {
 			const auto& production = prodictionWithID.first;
-			const int id = prodictionWithID.second;
+			//const int id = prodictionWithID.second;
 			int k = production.right.size();
 			bool canNull = true;
 			for (int i = 0; i < k; i++) {
@@ -124,6 +125,7 @@ int LRBuilder::initFirst() {
 							fx.push_back(f);
 						}
 					}
+					break;
 				}
 			}
 			//s -> "",add "" to first s
@@ -170,7 +172,7 @@ int LRBuilder::findState(const LRState& state) {
 	return -1;
 }
 
-void LRBuilder::buildTable() {
+void LRBuilder::buildTable(const string& start) {
 	const int stateCnt = lrstatus.size();
 	//initialize the table,set all state to error
 	for (int i = 0; i < stateCnt; i++) {
@@ -200,16 +202,16 @@ void LRBuilder::buildTable() {
 		}
 		for (auto& lrProduction : state.productions) {
 			const auto& production = productionManager.getProduction(lrProduction.productionId);
-			if (lrProduction.pos == production.right.size()) {// s -> abc.
-				if (production.left.name == startToken.name + "'") {//S' -> s.
+			if ((size_t)lrProduction.pos == production.right.size()) {// s -> abc.
+				if (production.left.name == start + "'") {//S' -> s.
 					row[lrProduction.lookAhead].action = LRAction::ACCEPT;
 				}
 				else {
-					if (row[lrProduction.lookAhead].action = LRAction::ERROR) {
+					if (row[lrProduction.lookAhead].action == LRAction::ERROR) {
 						row[lrProduction.lookAhead].action = LRAction::REDUCE;
 						row[lrProduction.lookAhead].target = lrProduction.productionId;
 					}
-					else if (row[lrProduction.lookAhead].action = LRAction::SHIFT) {
+					else if (row[lrProduction.lookAhead].action == LRAction::SHIFT) {
 						//TODO shift/reduce conflict
 						auto last = production.right[0];
 						for (auto& token : production.right) {

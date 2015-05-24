@@ -366,7 +366,7 @@ idmap nfa_cset(NFA_TABLE table, idmap ids, char c)
 		if (adj != -1)
 			m.insert(idpair(adj, false));
 	}
-
+		
 	return m;
 }
 

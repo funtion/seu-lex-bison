@@ -25,16 +25,15 @@ public:
 private:
 	TokenManager& tokenManager;
 	ProductionManager& productionManager;
-	NonterminalToken startToken;
 	map<LRState, int> lrstatus;
 	map<int, vector<int>> first;
 	map<int, bool> nullable;
 public:
-	int build();
+	int build(const string& start);
 	
 private:
 	int buildState(vector<LRProduction> initProduction);
-	void buildTable();
+	void buildTable(const string& start);
 public:
 	int startState;
 	int initFirst();
