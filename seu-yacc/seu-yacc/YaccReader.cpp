@@ -238,8 +238,7 @@ void YaccReader::readproduct(string productionDefine)
 		//	cout << "\nleft:" << left << "----right:";
 			//for (int i = 0; i < right.size(); i++)
 			//	cout << right[i]<<endl;
-			for (int i = 0; i < right.size(); i++)
-				right.pop_back();
+			right.clear();
 			
 		}
 		else if (flag == 2 && (temp[i] == ';'))
@@ -252,8 +251,7 @@ void YaccReader::readproduct(string productionDefine)
 			//	cout << right[i] << endl;
 			left = "";
 			action = "";
-			for (int i = 0; i < right.size(); i++)
-				right.pop_back();
+			right.clear();
 			flag = 1;
 		}
 		else if (flag == 2 && (temp[i] == '{'))
@@ -277,8 +275,7 @@ void YaccReader::readproduct(string productionDefine)
 		buffer[n] = left;
 		left = "";
 		action = "";
-		for (int i = 0; i < right.size(); i++)
-			right.pop_back();
+		right.clear();
 	}
 
 	start = buffer[0];
