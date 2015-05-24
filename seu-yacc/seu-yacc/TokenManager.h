@@ -16,6 +16,9 @@ private:
 public:
 	bool isTerminal(const Token& token);
 	bool isTerminal(const string& token);
+	inline map<string, int>& allToken(){
+		return tokens;
+	}
 	inline map<int, TerminalToken>& allTerminal() {
 		return terminals;
 	}

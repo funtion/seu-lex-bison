@@ -31,7 +31,7 @@ int YaccReader::read()
 	}
 
 	readtoken(tokenDefine);
-	readproduct(productionDefine);
+//	readproduct(productionDefine);
 	return 0;
 }
 
@@ -88,7 +88,6 @@ void YaccReader::readtoken(string tokenDefine)
 			while ((begin = temp.find(seg)) !=temp.npos)
 			{			
 				ttoken.name= temp.substr(0, begin);
-				cout << "name:" << ttoken.name << endl;
 				tokenManager.buildToken(ttoken.name,ttoken.type,ttoken.associativity,ttoken.precedence);
 				ttoken.name = "";
 				temp = temp.substr(begin + 1, temp.length() - begin - 1);
@@ -98,7 +97,6 @@ void YaccReader::readtoken(string tokenDefine)
 				if (temp[i] != '\n')
 					ttoken.name += temp[i];
 			}
-			cout << "name:" << ttoken.name<<endl;
 			tokenManager.buildToken(ttoken.name, ttoken.type, ttoken.associativity, ttoken.precedence);
 			ttoken.name = "";
 		}
@@ -172,21 +170,24 @@ void YaccReader::readtoken(string tokenDefine)
 
 		}
 	} //end of for
-	/*为ttoken添加type*/
+	/*为终结符添加type并根据vector<Type>types构造非终结符*/
+	//for (auto& i : tokenManager.allToken())
+	//{
+	//	cout << "\n----------------------\n" <<i.first<< "--"<<i.second;
+	//}
 	for (int i = 0; i < types.size(); i++)
 	{
 		string name=types[i].tokennames;
-		for (int j = 0; j < unions.size(); j++)
+		string type = types[i].typenames;
+		if (tokenManager.isTerminal(name))
 		{
-			if (types[i].typenames == unions[j].typenames)
-			{
-				string type = unions[j].type;
-				tokenManager.setType(name, type);
-				cout << "\n name:" << name << "type:" << type<<endl;
-			}
-		}	
+			tokenManager.setType(name, type);
+			cout << name << "   ---have found in terminals"<<endl;
+		}
+		else
+			tokenManager.buildToken(name, type);		 //构造非中介符，存入map<int, NonterminalToken> nonterminals;中
 	}
-
+	
 
 	/*下面的代码用来测试*/
 
