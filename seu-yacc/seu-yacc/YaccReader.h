@@ -17,6 +17,7 @@ public:
 	//the taken
 	string tokenDefine;
 	// code defined by user
+	string productionDefine;
 	string userCode;
 	TokenManager& tokenManager;
 	ProductionManager& productionManager;

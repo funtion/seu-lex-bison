@@ -24,6 +24,7 @@ int YaccReader::read()
 	readUntil("%{"); 
 	userHeader = readUntil("%}");
 	tokenDefine = readUntil("%%");
+	productionDefine = readUntil("%%");
 	int c;
 	while ((c = fgetc(file)) != EOF){ //Öð¸ö×Ö·û¶ÁÎÄ¼þ
 		userCode += (char)c;
