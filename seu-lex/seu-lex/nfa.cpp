@@ -263,13 +263,42 @@ NFA nfa_merge(NFA_TABLE table, NFA_STATE_ID *id, vector<NFA> v)
 
 */
 
+set<char> nfa_char_set(NFA_TABLE table, NFA nfa)
+{
+	set<char> char_set;
+	idmap state;
+	idmap::iterator i;
+	NFA_EDGE *e;
+	bool all_taged;
+
+	state.insert(idpair(nfa.initial, false));
+	while(1) {
+		all_taged = true;
+		for (i=state.begin(); i!=state.end(); i++)
+			if (!i->second) {
+				all_taged = false;
+				break;
+			}
+		if (all_taged) 
+			return char_set;
+
+		i->second = true;		/* tag */
+		for (e = table[i->first].first_edge; e != NULL; e = e->next) {
+			state.insert(idpair(e->adjvex, false));
+			if (!e->cost.epsilon)
+				char_set.insert(e->cost.c);
+		}
+	}
+}
+
+
 /* 
   nfa_adj_e
   get all nfa states can be arrived via epsilon edge from give states
 */
-map<NFA_STATE_ID, bool> nfa_adj_e(NFA_TABLE table, NFA_STATE_ID id)
+idmap nfa_adj_e(NFA_TABLE table, NFA_STATE_ID id)
 {
-	map<NFA_STATE_ID, bool> m;
+	idmap m;
 	NFA_EDGE *e;
 	for (e = table[id].first_edge; e != NULL; e = e->next) {
 		if (e->cost.epsilon)
@@ -283,10 +312,10 @@ map<NFA_STATE_ID, bool> nfa_adj_e(NFA_TABLE table, NFA_STATE_ID id)
   nfa_e_closure
   the epsilon closure of a set of nfa states
 */
-map<NFA_STATE_ID, bool> nfa_e_closure(NFA_TABLE table, map<NFA_STATE_ID, bool> ids)
+idmap nfa_e_closure(NFA_TABLE table, idmap ids)
 {
-	map<NFA_STATE_ID, bool> temp;
-	map<NFA_STATE_ID, bool>::iterator i;
+	idmap temp;
+	idmap::iterator i;
 	bool all_taged;
 
 	for (i=ids.begin(); i!=ids.end(); i++)	/* make all untaged */
@@ -327,10 +356,10 @@ NFA_STATE_ID nfa_adj_c(NFA_TABLE table, NFA_STATE_ID id, char c)
   get the set arrived via character from given set.
   used when nfa to dfa.
 */
-map<NFA_STATE_ID, bool> nfa_cset(NFA_TABLE table, map<NFA_STATE_ID, bool> ids, char c)
+idmap nfa_cset(NFA_TABLE table, idmap ids, char c)
 {
-	map<NFA_STATE_ID, bool> m;
-	map<NFA_STATE_ID, bool>::iterator i;
+	idmap m;
+	idmap::iterator i;
 	NFA_STATE_ID adj;
 	for (i=ids.begin(); i!=ids.end(); i++) {
 		adj = nfa_adj_c(table, i->first, c);
@@ -348,9 +377,9 @@ map<NFA_STATE_ID, bool> nfa_cset(NFA_TABLE table, map<NFA_STATE_ID, bool> ids, c
 
 
 
-/*
+/****************************************
   FOR TEST
-*/
+*****************************************/
 void print_nfa_edge(NFA_EDGE *edge)
 {
 	if (edge->cost.epsilon)

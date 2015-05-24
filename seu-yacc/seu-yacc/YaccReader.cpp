@@ -181,13 +181,13 @@ void YaccReader::readtoken(string tokenDefine)
 		string type = types[i].typenames;
 		if (tokenManager.isTerminal(name))
 		{
-			tokenManager.setType(name, type);
+				tokenManager.setType(name, type);
 			cout << name << "   ---have found in terminals"<<endl;
-		}
+			}
 		else
 			tokenManager.buildToken(name, type);		 //构造非中介符，存入map<int, NonterminalToken> nonterminals;中
-	}
-	
+		}	
+
 
 	/*下面的代码用来测试*/
 

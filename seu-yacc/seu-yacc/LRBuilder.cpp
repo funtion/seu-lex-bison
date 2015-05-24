@@ -125,6 +125,7 @@ int LRBuilder::initFirst() {
 							fx.push_back(f);
 						}
 					}
+					break;
 				}
 			}
 			//s -> "",add "" to first s
