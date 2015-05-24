@@ -29,6 +29,15 @@ public:
 	}
 
 	int comp(int left, int right);
+	void setType(const string& name, const string& type) {
+		terminals[tokens[name]].type = type;
+	}
+	void setAssociativity(const string& name, const Associativity& associativity) {
+		terminals[tokens[name]].associativity = associativity;
+	}
+	void setPrecedence(const string& name, const int precedence) {
+		terminals[tokens[name]].precedence = precedence;
+	}
 };
 
 #endif //_TOKENMANAGER_H
