@@ -6,11 +6,11 @@
 #include "TOKEN.h"
 
 enum LRAction {
-	SHIFT,
-	REDUCE,
-	GOTO,
-	ACCEPT,
-	ERROR
+	SHIFT=0,
+	REDUCE=1,
+	GOTO=2,
+	ACCEPT=3,
+	ERROR=4
 };
 
 struct LRTableItem{

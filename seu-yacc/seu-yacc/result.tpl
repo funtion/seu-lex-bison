@@ -7,8 +7,13 @@
 /*yyparser*/
 #include <stack>
 #include <cstdio>
-#include "table.h"
+#include "tab.h"
 using std::stack;
+#define SHIFT 0
+#define REDUCE 1
+#define GOTO 2
+#define ACCPET 3
+#define ERROR  4
 int yyParser(){
 	stack<int> st;
 	int currentState = 0;
@@ -42,9 +47,6 @@ int yyParser(){
 		}
 	}
 	return 0;
-
-
-
 }
 /*user function*/
-%s 
+%s

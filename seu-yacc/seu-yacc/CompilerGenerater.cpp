@@ -1,50 +1,54 @@
 #include "stdafx.h"
 #include "CompilerGenerater.h"
 int CompilerGenerater::generate(const string& tplPath, const string& outPath) {
-	FILE* tplFile = fopen(tplPath.c_str(), "r");
 	FILE* outFile = fopen(outPath.c_str(), "w");
-	const size_t MAXN = 8192;
-	char* tpl = new char[MAXN];
-	fread(tpl, sizeof(char), MAXN, tplFile);
-	stringstream lrTable;
+	
+	ifstream tplfile(tplPath);
+	string stpl((istreambuf_iterator<char>(tplfile)), istreambuf_iterator<char>());
+	const char *tpl = stpl.c_str();
+	string lrTable;
 
-	lrTable << "int action[][" << builder.lrTable[0].size() << "] = {";
+	lrTable += "int action[][";
+	lrTable += to_string(builder.lrTable[0].size());
+	lrTable+="] = {\n";
 	for (size_t i = 0; i < builder.lrTable.size(); i++) {
-		lrTable << "{";
+		lrTable += "{";
 		for (size_t j = 0; j < builder.lrTable[i].size(); j++) {
-			lrTable << builder.lrTable[i][j].action << " ,";
+			lrTable += to_string((int)builder.lrTable[i][j].action);
+			lrTable += " ,";
 		}
-		lrTable << "},\n";
+		lrTable += "},\n";
 	}
-	lrTable << "};\n";
-	lrTable << "int target[][" << builder.lrTable[0].size() << "] = {\n";
+	lrTable += "};\n";
+	lrTable += "int target[][";
+	lrTable += to_string(builder.lrTable[0].size());
+	lrTable += "] = {\n";
 	for (int i = 0; i < (int)builder.lrTable.size(); i++) {
-		lrTable << "{";
+		lrTable += "{";
 		for (int j = 0; j < (int)builder.lrTable[i].size(); j++) {
-			lrTable << builder.lrTable[i][j].target << " ,";
+			lrTable += to_string(builder.lrTable[i][j].target);
+			lrTable += " ,";
 		}
-		lrTable << "},\n";
+		lrTable += "},\n";
 	}
-	lrTable << "};\n";
-	string lrTableString;
-	lrTable >> lrTableString;
-	stringstream productions;
+	lrTable += "};\n";
+	string productions;
 	auto &productionManager = builder.productionManager;
-	productions << "int productions[]["<<10<<"]={\n";
+	productions += "int productions[][10]={\n";
 	for (auto& pro : productionManager.productions) {
 		//[id,left,num,right....]
-		productions << "{" << pro.first<<","<<pro.second.left.name << "," << pro.second.right.size() << ",";
+		productions += "{";
+		productions += to_string(pro.first);
+		productions += ",";
+		productions += pro.second.left.name + ",";
+		productions += to_string(pro.second.right.size()) + ",";
 		for (const auto& r : pro.second.right) {
-			productions << r.name << ",";
+			productions += r.name + ",";
 		}
-		productions << "}\n";
+		productions += "}\n";
 	}
-	productions << "};\n";
-	string productionString;
-	productions >> productionString;
-	fprintf(outFile, tpl, reader.userHeader.c_str(), lrTableString.c_str(), productionString.c_str(), reader.userCode.c_str());
-	delete[] tpl;
-	fclose(tplFile);
+	productions += "};\n";
+	fprintf(outFile, tpl, reader.userHeader.c_str(), lrTable.c_str(), productions.c_str(), reader.userCode.c_str());
 	fclose(outFile);
 	return 0;
 }
