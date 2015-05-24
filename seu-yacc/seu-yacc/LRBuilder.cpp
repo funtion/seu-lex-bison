@@ -9,15 +9,15 @@ LRBuilder::LRBuilder(TokenManager& tokenManager, ProductionManager& productionMa
 
 
 //build LR(1) status
-int LRBuilder::build() {
-	string& startName = startToken.name + "'";
-	auto& production = productionManager.buildProduction(startName, { startToken.name },"");
+int LRBuilder::build(const string& start) {
+	string& startName = start + "'";
+	auto& production = productionManager.buildProduction(startName, { start },"");
 	int id = productionManager.getProductionID(production);
 	auto& endToken = tokenManager.buildToken("$", "", LEFT, 0);
 	int endId = tokenManager.getTokenId(endToken.name);
 	LRProduction lrProduction{ id, 0, endId}; //S' -> .s, $
 	startState = buildState({lrProduction});
-	buildTable();
+	buildTable(start);
 	return 0;
 }
 
@@ -170,7 +170,7 @@ int LRBuilder::findState(const LRState& state) {
 	return -1;
 }
 
-void LRBuilder::buildTable() {
+void LRBuilder::buildTable(const string& start) {
 	const int stateCnt = lrstatus.size();
 	//initialize the table,set all state to error
 	for (int i = 0; i < stateCnt; i++) {
@@ -201,7 +201,7 @@ void LRBuilder::buildTable() {
 		for (auto& lrProduction : state.productions) {
 			const auto& production = productionManager.getProduction(lrProduction.productionId);
 			if (lrProduction.pos == production.right.size()) {// s -> abc.
-				if (production.left.name == startToken.name + "'") {//S' -> s.
+				if (production.left.name == start + "'") {//S' -> s.
 					row[lrProduction.lookAhead].action = LRAction::ACCEPT;
 				}
 				else {
