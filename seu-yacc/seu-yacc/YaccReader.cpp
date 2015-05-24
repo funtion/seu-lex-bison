@@ -30,8 +30,8 @@ int YaccReader::read()
 		userCode += (char)c;
 	}
 
-	readtoken(tokenDefine);
-	//readproduct(productionDefine);
+	//readtoken(tokenDefine);
+	readproduct(productionDefine);
 	return 0;
 }
 
@@ -166,16 +166,30 @@ void YaccReader::readtoken(string tokenDefine)
 				}
 			}
 			types.push_back(type);
-
 		}
 		else if (hed == "start")
 		{
 
 		}
 	} //end of for
+	/*为ttoken添加type*/
+	for (int i = 0; i < types.size(); i++)
+	{
+		string name=types[i].tokennames;
+		for (int j = 0; j < unions.size(); j++)
+		{
+			if (types[i].typenames == unions[j].typenames)
+			{
+				string type = unions[j].type;
+				tokenManager.setType(name, type);
+				cout << "\n name:" << name << "type:" << type<<endl;
+			}
+		}	
+	}
 
 
 	/*下面的代码用来测试*/
+
 	cout << "\n-----------The unions:---------------\n";
 	for (int i = 0; i < unions.size(); i++)
 		cout << unions[i].type << "\t\t" << unions[i].typenames << "\t" << endl;
@@ -190,6 +204,8 @@ void YaccReader::readproduct(string productionDefine)
 	string action = "";
 	string righttemp="";
 	int flag = 1;//标记一个产生式的状态
+	string buffer[100]; //用来存放产生式左边的内容，供测试以及查找start
+	int n = 0;
 	string temp = productionDefine;
 	for (int i = 0; i < temp.length(); i++)
 	{
@@ -227,6 +243,8 @@ void YaccReader::readproduct(string productionDefine)
 		else if (flag == 2 && (temp[i] == ';'))
 		{
 			productionManager.buildProduction(left, right, action);
+			buffer[n] = left;
+			n++;
 			left = "";
 			action = "";
 			for (int i = 0; i < right.size(); i++)
@@ -251,11 +269,19 @@ void YaccReader::readproduct(string productionDefine)
 	if (left != "")
 	{
 		productionManager.buildProduction(left, right, action);
+		buffer[n] = left;
 		left = "";
 		action = "";
 		for (int i = 0; i < right.size(); i++)
 			right.pop_back();
 	}
+
+	start = buffer[0];
+	/*for (int i = 0; i <= n; i++)
+	{
+	cout <<"  " <<buffer[i] << endl;
+	}*/
+
 
 	/*for (const auto& i: productionManager.all())
 	{

@@ -12,6 +12,7 @@ private:
 	string readUntil(const string& s);
 	void readtoken(string tokenDefine);
 	void readproduct(string productionDefine);
+	string start;
 public:
 	// header code defined by user
 	string userHeader;
@@ -36,7 +37,7 @@ private:
 	};
 	vector<Union>unions;
 	vector<Type>types;
-	vector<Token>tokens;//´æ·Å¶Á³öµÄToken
+
 	
 public:
 	NonterminalToken startToken;
