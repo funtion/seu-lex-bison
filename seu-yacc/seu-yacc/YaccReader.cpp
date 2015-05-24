@@ -31,6 +31,7 @@ int YaccReader::read()
 	}
 
 	readtoken(tokenDefine);
+	//readproduct(productionDefine);
 	return 0;
 }
 
@@ -59,60 +60,50 @@ void YaccReader::readtoken(string tokenDefine)
 	int count;
 	while ((count = tokenDefine.find("%", 1)) != tokenDefine.npos)//find函数找到成功返回‘%’的标记，失败返回npos
 	{
-
 		buffer[n] = tokenDefine.substr(1, count - 1);
 		tokenDefine = tokenDefine.substr(count, tokenDefine.length() - count);
 		if (buffer[n] =="\n")                               //忽略空白行。
 			continue;
 		else
-			n++;
-		
+			n++;		
 	}
 	buffer[n] = tokenDefine.substr(1, tokenDefine.length() - 1);
-
 	for (int o = 0; o <= n; o++)               //处理‘/*****/’
 	{
 		count = buffer[o].find("/*");
 		buffer[o] = buffer[o].substr(0, count);
-	//	cout << buffer[o] << "\n--------------------------\n";
 	}
-
-
 	for (int i = 0; i <= n; i++)
 	{
 		string temp = buffer[i];
-
 		int begin;
 		string hed;
 		begin = buffer[i].find('\t');                      //以制表符为区分点 找出head部分。
 		hed = temp.substr(0, begin);
 		temp = temp.substr(begin + 1, temp.length() - begin - 1);
-		//cout << "hed:  " << hed<<endl;
-		
 		if (hed=="token")
 		{
+			TerminalToken ttoken;    //创建一个终结符
 			char seg = ' ';
 			while ((begin = temp.find(seg)) !=temp.npos)
-			{
-				Token token;
-				token.name= temp.substr(0, begin);
-				tokens.push_back(token);
+			{			
+				ttoken.name= temp.substr(0, begin);
+				cout << "name:" << ttoken.name << endl;
+				tokenManager.buildToken(ttoken.name,ttoken.type,ttoken.associativity,ttoken.precedence);
+				ttoken.name = "";
 				temp = temp.substr(begin + 1, temp.length() - begin - 1);
 			}
-			Token token;
-			//token.name = temp.substr(0, temp.length()-1);
 			for (int i = 0; i < temp.length(); i++)        //此for循环处理最后一个token （忽略多个回车产生的空白行）
 			{
 				if (temp[i] != '\n')
-					token.name += temp[i];
+					ttoken.name += temp[i];
 			}
-			tokens.push_back(token);
-			for (int i = 0; i < tokens.size(); i++)
-				cout << tokens[i].name << " ";
+			cout << "name:" << ttoken.name<<endl;
+			tokenManager.buildToken(ttoken.name, ttoken.type, ttoken.associativity, ttoken.precedence);
+			ttoken.name = "";
 		}
 		else if (hed == "union")
 		{
-			cout <<"this is temp:"<< temp<<endl;
 			while ((begin = temp.find("\n")) != temp.npos)             //找出union中的每一行
 			{
 				string line;
@@ -191,24 +182,84 @@ void YaccReader::readtoken(string tokenDefine)
 	cout << "\n-----------The types:---------------\n";
 	for (int i = 0; i < types.size(); i++)
 		cout << types[i].tokennames << "\t" << types[i].typenames << "\t" << endl;
-	//int i = 0;
-	//int begin;
-	//while ((begin = buffer[i].find("token")) != buffer[i].npos)
-	//{
-	//	cout << begin;
-	//	string temp = buffer[i];
-	//	for (int j = begin; j < temp.length(); j++)
-	//	{
-	//		if (temp[j] == ' ')//忽略空格
-	//			continue;
-	//		else
-	//		{
-
-	//		}
-	//	}
-	//}
 }
-void producttoken()
+void YaccReader::readproduct(string productionDefine)
 {
+	string left="";
+	vector<string>right;
+	string action = "";
+	string righttemp="";
+	int flag = 1;//标记一个产生式的状态
+	string temp = productionDefine;
+	for (int i = 0; i < temp.length(); i++)
+	{
+		
+		if ((flag == 1) && ((temp[i] >= 'a'&&temp[i] <= 'z') || (temp[i] >= 'A'&&temp[i] <= 'Z') || (temp[i] = '_')))//状态1遇到字母。读左侧
+		{
+			left += temp[i];
+		}
+		else if (flag == 2 && ((temp[i] >= 'a'&&temp[i] <= 'z') || (temp[i] >= 'A'&&temp[i] <= 'Z') || (temp[i]='_')))//状态2遇到字母。读右侧
+		{
+			righttemp += temp[i];
+		}
+		else if (flag==1&&temp[i] == ':')
+		{
+			flag = 2;   //进入状态2
+		}
+		else if (flag==2&&(temp[i] == ' '))//状态2读到空格
+		{
+			if (righttemp == "")
+				continue;
+			else
+			{
+				right.push_back(righttemp);
+				righttemp = "";
+			}
+		}
+		else if (flag ==2 && (temp[i] == '|'))//状态2遇到|
+		{
+			productionManager.buildProduction(left, right, action);
+			//cout << "\nleft:" << left << "----right:";
+			for (int i = 0; i < right.size(); i++)
+				right.pop_back();
+			
+		}
+		else if (flag == 2 && (temp[i] == ';'))
+		{
+			productionManager.buildProduction(left, right, action);
+			left = "";
+			action = "";
+			for (int i = 0; i < right.size(); i++)
+				right.pop_back();
+			flag = 1;
+		}
+		else if (flag == 2 && (temp[i] = '{'))
+		{
+			flag = 3;
+		}
+		else if (flag == 3 && (temp[i]) != '}')
+		{
+			action += temp[i];
+		}
+		else if (flag == 3 && (temp[i]) == '}')//遇到}回到状态2
+		{
+			flag = 2;
+		}
 
+	}//end of read
+	/*处理最后一个产生式（不以分号结尾）*/
+	if (left != "")
+	{
+		productionManager.buildProduction(left, right, action);
+		left = "";
+		action = "";
+		for (int i = 0; i < right.size(); i++)
+			right.pop_back();
+	}
+
+	/*for (const auto& i: productionManager.all())
+	{
+		cout << i.first.left.name << i.first.right.size();
+	}*/
+	
 }

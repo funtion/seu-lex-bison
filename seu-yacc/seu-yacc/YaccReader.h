@@ -11,6 +11,7 @@ public:
 private:
 	string readUntil(const string& s);
 	void readtoken(string tokenDefine);
+	void readproduct(string productionDefine);
 public:
 	// header code defined by user
 	string userHeader;
