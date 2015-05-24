@@ -27,7 +27,7 @@ int LRBuilder::buildState(const vector<LRProduction> initProduction) {
 	//build Closure
 	LRState state{ initProduction, {} };
 	while (true) {
-		bool newProduction = false;
+		vector<LRProduction> newProduction;
 		for (const auto& lrproduction : state.productions) {
 			const auto& prooduction = productionManager.getProduction(lrproduction.productionId);
 			if (lrproduction.pos < (int)prooduction.right.size()) { //dot is not at end
@@ -46,8 +46,7 @@ int LRBuilder::buildState(const vector<LRProduction> initProduction) {
 						for (auto& nextFirst : nextFirsts) {
 							LRProduction nextLR{ id, 0, nextFirst};
 							if (find(state.productions.begin(), state.productions.end(), nextLR) == state.productions.end()) {
-								newProduction = true;
-								state.productions.push_back(nextLR);
+								newProduction.push_back(nextLR);
 							}
 						}
 
@@ -55,21 +54,26 @@ int LRBuilder::buildState(const vector<LRProduction> initProduction) {
 				}
 			}
 		}
-		if (!newProduction) {
+		if (newProduction.size() == 0) {
 			break;
 		}
+		state.productions.insert(state.productions.end(), newProduction.begin(), newProduction.end());
 	}
 	int sid = findState(state);
 	if (sid != -1) {
 		return sid;
 	}
+	int id = lrstatus.size();
+	lrstatus[state] = id;
 	// build GOTO
 	map<Token, vector<LRProduction>> trans;
 	for (const auto& lrproduction : state.productions) {
 		const auto& prooduction = productionManager.getProduction(lrproduction.productionId);
 		if (lrproduction.pos < (int)prooduction.right.size()) {
 			const auto& nextToken = prooduction.right[lrproduction.pos];
-			trans[nextToken].push_back(lrproduction);
+			auto newLR = lrproduction;
+			newLR.pos++;
+			trans[nextToken].push_back(newLR);
 		}
 		else {//TODO X -> abc.
 
@@ -80,8 +84,7 @@ int LRBuilder::buildState(const vector<LRProduction> initProduction) {
 		const auto& productions = tran.second;
 		state.action[token] = buildState(productions);
 	}
-	int id = lrstatus.size();
-	lrstatus[state] = id;
+	
 	return id;
 }
 
@@ -167,16 +170,17 @@ vector<int> LRBuilder::getFirst(const vector<int>& tokens) {
 int LRBuilder::findState(const LRState& state) {
 	for (const auto& s : lrstatus) {
 		if (s.first.productions == state.productions)
-			s.second;
+			return s.second;
 	}
 	return -1;
 }
 
 void LRBuilder::buildTable(const string& start) {
 	const int stateCnt = lrstatus.size();
+	const int tokenCnt = tokenManager.size();
 	//initialize the table,set all state to error
 	for (int i = 0; i < stateCnt; i++) {
-		lrTable.push_back(vector<LRTableItem>(stateCnt));
+		lrTable.push_back(vector<LRTableItem>(tokenCnt));
 		auto& row = lrTable.back();
 		for (int j = 0; j < stateCnt; j++) {
 			row[j].action = ERROR;
