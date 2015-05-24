@@ -20,7 +20,6 @@ int _tmain(int argc, char* argv[])
 	TokenManager tokenManager;
 	ProductionManager productionManager(tokenManager);
 	YaccReader reader(file, tokenManager, productionManager);
-	
 	reader.read();
 	//cout << "this is Header: "<<reader.tokenDefine;
 

@@ -6,6 +6,7 @@
 #define _PRODUCTIONMANAGER_H
 
 class ProductionManager {
+	friend class CompilerGenerater;
 public: 
 	ProductionManager(TokenManager& tokenManager) :tokenManager(tokenManager) {
 

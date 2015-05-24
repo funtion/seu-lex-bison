@@ -13,7 +13,7 @@ int LRBuilder::build() {
 	string& startName = startToken.name + "'";
 	auto& production = productionManager.buildProduction(startName, { startToken.name });
 	int id = productionManager.getProductionID(production);
-	auto& endToken = tokenManager.buildToken("$", "", LEFT, "");
+	auto& endToken = tokenManager.buildToken("$", "", LEFT, 0);
 	int endId = tokenManager.getTokenId(endToken.name);
 	LRProduction lrProduction{ id, 0, endId}; //S' -> .s, $
 	startState = buildState({lrProduction});
@@ -211,11 +211,26 @@ void LRBuilder::buildTable() {
 					}
 					else if (row[lrProduction.lookAhead].action = LRAction::SHIFT) {
 						//TODO shift/reduce conflict
+						auto last = production.right[0];
+						for (auto& token : production.right) {
+							if (!tokenManager.isTerminal(token)) {
+								last = token;
+							}
+						}
+						int lastId = tokenManager.getTokenId(last.name);
+						int pri = tokenManager.comp(lastId,lrProduction.lookAhead);
+						if (pri == 1) {
+							row[lrProduction.lookAhead].action = LRAction::REDUCE;
+							row[lrProduction.lookAhead].target = lrProduction.productionId;
+						}
+						else if (pri == 0) {//equal priority or not compireable
+							TerminalToken& tlast = (TerminalToken&)last;
+							if (tlast.associativity == LEFT) {
+								row[lrProduction.lookAhead].action = LRAction::REDUCE;
+								row[lrProduction.lookAhead].target = lrProduction.productionId;
+							}
+						}
 					}
-					else if (row[lrProduction.lookAhead].action = LRAction::SHIFT) {
-						//TODO shift/shift conflict
-					}
-					
 				}
 			}
 		}
