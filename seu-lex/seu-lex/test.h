@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "regex.h"
 #include "nfa.h"
+#include "dfa.h"
 
 void test_nfa(void)
 {
@@ -74,13 +75,25 @@ void test_regex2nfa()
 	print_nfa_table(table, id);
 
 	/* test closure *********************/
-	map<NFA_STATE_ID, bool> m0, m1;
+	idmap m0, m1;
 	m0.insert(idpair(nfa.initial, false));
 
 	m1 = nfa_e_closure(table, m0);
-	map<NFA_STATE_ID, bool>::iterator i;
+	idmap::iterator i;
 	printf("e-closure of s0: ");
 	for (i=m1.begin(); i!=m1.end(); i++)
 		printf("%d ", i->first);
+
+	/* test char set ********************/
+	set<char> cs = nfa_char_set(table, nfa);
+	set<char>::iterator csi;
+	printf("\nchsr set of nfa:");
+	for (csi = cs.begin(); csi != cs.end(); csi++)
+		printf("%c ", *csi);
+
+	/* test dfa **************************/
+	DFA dfa;
+	dfa.nfa_to_dfa(table, nfa);
+	dfa.print_dfa();
 }
 
