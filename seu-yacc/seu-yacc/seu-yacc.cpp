@@ -15,7 +15,7 @@ int _tmain(int argc, char* argv[])
 	}
 	FILE* file;
 	int error;
-	if((error = fopen_s(&file,"D:\\Github\\seu-lex-bison\\seu-yacc\\test\\sample_test.y", "r"))){
+	if((error = fopen_s(&file,"H:\\minic.y", "r"))){
 		cout << "cannot open file ,error code "<< error << endl;
 		return 1;
 	}

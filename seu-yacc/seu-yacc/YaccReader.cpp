@@ -30,7 +30,7 @@ int YaccReader::read()
 		userCode += (char)c;
 	}
 
-	//readtoken(tokenDefine);
+	readtoken(tokenDefine);
 	readproduct(productionDefine);
 	return 0;
 }
@@ -210,11 +210,11 @@ void YaccReader::readproduct(string productionDefine)
 	for (int i = 0; i < temp.length(); i++)
 	{
 		
-		if ((flag == 1) && ((temp[i] >= 'a'&&temp[i] <= 'z') || (temp[i] >= 'A'&&temp[i] <= 'Z') || (temp[i] = '_')))//×´Ì¬1Óöµ½×ÖÄ¸¡£¶Á×ó²à
+		if ((flag == 1) && ((temp[i] >= 'a'&&temp[i] <= 'z') || (temp[i] >= 'A'&&temp[i] <= 'Z') || (temp[i] == '_')))//×´Ì¬1Óöµ½×ÖÄ¸¡£¶Á×ó²à
 		{
 			left += temp[i];
 		}
-		else if (flag == 2 && ((temp[i] >= 'a'&&temp[i] <= 'z') || (temp[i] >= 'A'&&temp[i] <= 'Z') || (temp[i]='_')))//×´Ì¬2Óöµ½×ÖÄ¸¡£¶ÁÓÒ²à
+		else if (flag == 2 && ((temp[i] >= 'a'&&temp[i] <= 'z') || (temp[i] >= 'A'&&temp[i] <= 'Z') || (temp[i]=='_')))//×´Ì¬2Óöµ½×ÖÄ¸¡£¶ÁÓÒ²à
 		{
 			righttemp += temp[i];
 		}
@@ -222,7 +222,7 @@ void YaccReader::readproduct(string productionDefine)
 		{
 			flag = 2;   //½øÈë×´Ì¬2
 		}
-		else if (flag==2&&(temp[i] == ' '))//×´Ì¬2¶Áµ½¿Õ¸ñ
+		else if (flag==2&&(temp[i] == ' '||temp[i]=='\n'))//×´Ì¬2¶Áµ½¿Õ¸ñ»ñ»Ø³µ
 		{
 			if (righttemp == "")
 				continue;
@@ -235,7 +235,9 @@ void YaccReader::readproduct(string productionDefine)
 		else if (flag ==2 && (temp[i] == '|'))//×´Ì¬2Óöµ½|
 		{
 			productionManager.buildProduction(left, right, action);
-			//cout << "\nleft:" << left << "----right:";
+		//	cout << "\nleft:" << left << "----right:";
+			//for (int i = 0; i < right.size(); i++)
+			//	cout << right[i]<<endl;
 			for (int i = 0; i < right.size(); i++)
 				right.pop_back();
 			
@@ -245,13 +247,16 @@ void YaccReader::readproduct(string productionDefine)
 			productionManager.buildProduction(left, right, action);
 			buffer[n] = left;
 			n++;
+		//	cout << "\nleft:" << left << "----right:";
+		//	for (int i = 0; i < right.size(); i++)
+			//	cout << right[i] << endl;
 			left = "";
 			action = "";
 			for (int i = 0; i < right.size(); i++)
 				right.pop_back();
 			flag = 1;
 		}
-		else if (flag == 2 && (temp[i] = '{'))
+		else if (flag == 2 && (temp[i] == '{'))
 		{
 			flag = 3;
 		}
@@ -277,10 +282,11 @@ void YaccReader::readproduct(string productionDefine)
 	}
 
 	start = buffer[0];
-	/*for (int i = 0; i <= n; i++)
-	{
-	cout <<"  " <<buffer[i] << endl;
-	}*/
+	//cout << start;
+	//for (int i = 0; i <= n; i++)
+	//{
+	//	//cout << "  " << buffer[i] << endl;
+	//}
 
 
 	/*for (const auto& i: productionManager.all())
