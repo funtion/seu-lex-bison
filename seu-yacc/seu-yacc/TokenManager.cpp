@@ -30,12 +30,13 @@ TerminalToken TokenManager::buildToken(const string& name, const string& type, A
 	
 }
 
-NonterminalToken TokenManager::buildToken(const string& name) {
+NonterminalToken TokenManager::buildToken(const string& name,const string& type) {
 	if (tokens.find(name) == tokens.end()){
 		int id = tokens.size();
 		tokens[name] = id;
 		NonterminalToken token;
 		token.name = name;
+		token.type = type;
 		nonterminals[id] = token;
 	}
 	return nonterminals[tokens[name]];

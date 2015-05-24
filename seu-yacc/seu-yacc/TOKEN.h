@@ -10,7 +10,7 @@ enum Associativity
 class Token {
 public: 
     string name;
-    
+    string type;
 	bool operator<(const Token& r) const
 	{
 		return name < r.name;
@@ -22,7 +22,7 @@ public:
 
 class TerminalToken : public Token{
 public:
-	string type;
+	
 	Associativity associativity;
 	int precedence;
 };
