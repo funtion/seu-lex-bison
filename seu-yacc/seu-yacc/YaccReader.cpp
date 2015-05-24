@@ -30,7 +30,7 @@ int YaccReader::read()
 		userCode += (char)c;
 	}
 
-	//readtoken(tokenDefine);
+	readtoken(tokenDefine);
 	readproduct(productionDefine);
 	return 0;
 }

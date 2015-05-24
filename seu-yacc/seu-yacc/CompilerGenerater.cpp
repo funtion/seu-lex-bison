@@ -9,9 +9,9 @@ int CompilerGenerater::generate(const string& tplPath, const string& outPath) {
 	stringstream lrTable;
 
 	lrTable << "int action[][" << builder.lrTable[0].size() << "] = {";
-	for (int i = 0; i < (int)builder.lrTable.size(); i++) {
+	for (size_t i = 0; i < builder.lrTable.size(); i++) {
 		lrTable << "{";
-		for (int j = 0; j < (int)builder.lrTable[i].size(); j++) {
+		for (size_t j = 0; j < builder.lrTable[i].size(); j++) {
 			lrTable << builder.lrTable[i][j].action << " ,";
 		}
 		lrTable << "},\n";

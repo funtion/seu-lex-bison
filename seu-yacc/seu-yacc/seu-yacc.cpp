@@ -25,7 +25,9 @@ int _tmain(int argc, char* argv[])
 	reader.read();
 	//cout << "this is Header: "<<reader.tokenDefine;
 	LRBuilder builder(tokenManager,productionManager);
-	builder.build();
+	cout << "[!!!!]start is set to e" << endl;
+	builder.build("e");
+	
 	CompilerGenerater generater(reader,builder);
 	generater.generateTableH("tab.h");
 	generater.generate("result.tpl", "compiler.cpp");
