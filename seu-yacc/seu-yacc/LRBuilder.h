@@ -26,6 +26,7 @@ private:
 	TokenManager& tokenManager;
 	ProductionManager& productionManager;
 	map<LRState, int> lrstatus;
+	map<int, LRState > lrstatus_id;
 	map<int, vector<int>> first;
 	map<int, bool> nullable;
 public:

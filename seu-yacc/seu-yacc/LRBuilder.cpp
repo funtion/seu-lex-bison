@@ -10,10 +10,10 @@ LRBuilder::LRBuilder(TokenManager& tokenManager, ProductionManager& productionMa
 
 //build LR(1) status
 int LRBuilder::build(const string& start) {
-	string& startName = start + "'";
+	string& startName = start + "_LR";
 	auto& production = productionManager.buildProduction(startName, { start },"");
 	int id = productionManager.getProductionID(production);
-	auto& endToken = tokenManager.buildToken("$", "", LEFT, 0);
+	auto& endToken = tokenManager.buildToken("_LR_END", "", LEFT, 0);
 	int endId = tokenManager.getTokenId(endToken.name);
 	LRProduction lrProduction{ id, 0, endId}; //S' -> .s, $
 	initFirst();
@@ -84,7 +84,7 @@ int LRBuilder::buildState(const vector<LRProduction> initProduction) {
 		const auto& productions = tran.second;
 		state.action[token] = buildState(productions);
 	}
-	
+	lrstatus_id[id] = state;
 	return id;
 }
 
@@ -188,9 +188,9 @@ void LRBuilder::buildTable(const string& start) {
 		}
 	}
 	//set table items
-	for (const auto& stateWithId : lrstatus) {
-		auto& state = stateWithId.first;
-		auto& id = stateWithId.second;
+	for (const auto& stateWithId : lrstatus_id) {
+		auto& state = stateWithId.second;
+		auto& id = stateWithId.first;
 		auto& row = lrTable[id];
 		for (auto& trans : state.action) {
 			auto& token = trans.first;

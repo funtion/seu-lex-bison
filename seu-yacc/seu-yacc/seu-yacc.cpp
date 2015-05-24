@@ -29,7 +29,7 @@ int _tmain(int argc, char* argv[])
 	builder.build("e");
 	
 	CompilerGenerater generater(reader,builder);
-	generater.generateTableH("tab.h");
+	generater.generateTableH("output/tab.h");
 	generater.generate("result.tpl", "compiler.cpp");
 	return 0;
 }
