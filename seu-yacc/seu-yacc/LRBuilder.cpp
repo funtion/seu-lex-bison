@@ -16,6 +16,7 @@ int LRBuilder::build(const string& start) {
 	auto& endToken = tokenManager.buildToken("$", "", LEFT, 0);
 	int endId = tokenManager.getTokenId(endToken.name);
 	LRProduction lrProduction{ id, 0, endId}; //S' -> .s, $
+	initFirst();
 	startState = buildState({lrProduction});
 	buildTable(start);
 	return 0;
@@ -96,7 +97,7 @@ int LRBuilder::initFirst() {
 		bool changed = false;
 		for (auto& prodictionWithID : allProduction) {
 			const auto& production = prodictionWithID.first;
-			const int id = prodictionWithID.second;
+			//const int id = prodictionWithID.second;
 			int k = production.right.size();
 			bool canNull = true;
 			for (int i = 0; i < k; i++) {
@@ -200,16 +201,16 @@ void LRBuilder::buildTable(const string& start) {
 		}
 		for (auto& lrProduction : state.productions) {
 			const auto& production = productionManager.getProduction(lrProduction.productionId);
-			if (lrProduction.pos == production.right.size()) {// s -> abc.
+			if ((size_t)lrProduction.pos == production.right.size()) {// s -> abc.
 				if (production.left.name == start + "'") {//S' -> s.
 					row[lrProduction.lookAhead].action = LRAction::ACCEPT;
 				}
 				else {
-					if (row[lrProduction.lookAhead].action = LRAction::ERROR) {
+					if (row[lrProduction.lookAhead].action == LRAction::ERROR) {
 						row[lrProduction.lookAhead].action = LRAction::REDUCE;
 						row[lrProduction.lookAhead].target = lrProduction.productionId;
 					}
-					else if (row[lrProduction.lookAhead].action = LRAction::SHIFT) {
+					else if (row[lrProduction.lookAhead].action == LRAction::SHIFT) {
 						//TODO shift/reduce conflict
 						auto last = production.right[0];
 						for (auto& token : production.right) {
