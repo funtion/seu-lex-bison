@@ -182,9 +182,9 @@ void YaccReader::readtoken(string tokenDefine)
 		else
 			tokenManager.buildToken(name, type);		 //构造非中介符，存入map<int, NonterminalToken> nonterminals;中
 	}	
-	for (auto& i : tokenManager.allNonterminal())
+	for (auto& i : tokenManager.allToken())
 	{
-		cout << "\n----------------------\n" << i.first << "--" << i.second.name;
+		cout << "\n----------------------\n" << i.first << "--" << i.second;
 	}
 
 	/*下面的代码用来测试*/
