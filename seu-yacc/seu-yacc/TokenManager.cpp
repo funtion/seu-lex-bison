@@ -49,9 +49,14 @@ bool TokenManager::isTerminal(const Token& token) {
 }
 
 bool TokenManager::isTerminal(const string& token) {
-	const int id = tokens[token];
-	return terminals.find(id) != terminals.end();
-
+	//const int id = tokens[token];
+	map<string, int>::iterator iter = tokens.find(token);
+	if (iter==tokens.end())
+	{
+		return false;
+	}
+	const int id =iter->second;
+	return terminals.find(id)!= terminals.end();
 }
 
 

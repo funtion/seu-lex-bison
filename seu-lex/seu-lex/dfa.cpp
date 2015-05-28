@@ -57,7 +57,7 @@ void nfa_to_dfa(NFA_TABLE nfa_tbl, NFA nfa, DFA &dfa)
 	vector<idmap> v;	/* dfa state <--> nfa closure */
 	vector<idmap>::size_type vt1, vt2;
 	idmap imtemp;
-
+	
 	set<char> char_set = nfa_char_set(nfa_tbl, nfa);
 	set<char>::iterator csi;
 
