@@ -10,10 +10,10 @@ LRBuilder::LRBuilder(TokenManager& tokenManager, ProductionManager& productionMa
 
 //build LR(1) status
 int LRBuilder::build(const string& start) {
-	string& startName = start + "'";
+	auto& endToken = tokenManager.buildToken("_LR_END", "", LEFT, 0);
+	string& startName = start + "_LR";
 	auto& production = productionManager.buildProduction(startName, { start },"");
-	int id = productionManager.getProductionID(production);
-	auto& endToken = tokenManager.buildToken("$", "", LEFT, 0);
+	int id = productionManager.getProductionID(production);//查找产生式 没有则添加
 	int endId = tokenManager.getTokenId(endToken.name);
 	LRProduction lrProduction{ id, 0, endId}; //S' -> .s, $
 	initFirst();
@@ -27,12 +27,12 @@ int LRBuilder::buildState(const vector<LRProduction> initProduction) {
 	//build Closure
 	LRState state{ initProduction, {} };
 	while (true) {
-		bool newProduction = false;
+		vector<LRProduction> newProduction;
 		for (const auto& lrproduction : state.productions) {
 			const auto& prooduction = productionManager.getProduction(lrproduction.productionId);
 			if (lrproduction.pos < (int)prooduction.right.size()) { //dot is not at end
 				const auto& nextToken = prooduction.right[lrproduction.pos];
-				if (!tokenManager.isTerminal(nextToken)) {
+				if (!tokenManager.isTerminal(nextToken)) {//.后面是非终结符，开始展开
 					const auto& nextProdutions = productionManager.getProductions((NonterminalToken&)nextToken);
 					for (const auto& nextProdution : nextProdutions) {
 						int id = productionManager.getProductionID(nextProdution);
@@ -46,8 +46,7 @@ int LRBuilder::buildState(const vector<LRProduction> initProduction) {
 						for (auto& nextFirst : nextFirsts) {
 							LRProduction nextLR{ id, 0, nextFirst};
 							if (find(state.productions.begin(), state.productions.end(), nextLR) == state.productions.end()) {
-								newProduction = true;
-								state.productions.push_back(nextLR);
+								newProduction.push_back(nextLR);
 							}
 						}
 
@@ -55,21 +54,26 @@ int LRBuilder::buildState(const vector<LRProduction> initProduction) {
 				}
 			}
 		}
-		if (!newProduction) {
+		if (newProduction.size() == 0) {	//不再增加新的产生式了。
 			break;
 		}
+		state.productions.insert(state.productions.end(), newProduction.begin(), newProduction.end());//将新增加的产生式插入状态末尾
 	}
 	int sid = findState(state);
 	if (sid != -1) {
-		return sid;
+		return sid;//?
 	}
+	int id = lrstatus.size();
+	lrstatus[state] = id;
 	// build GOTO
 	map<Token, vector<LRProduction>> trans;
 	for (const auto& lrproduction : state.productions) {
 		const auto& prooduction = productionManager.getProduction(lrproduction.productionId);
 		if (lrproduction.pos < (int)prooduction.right.size()) {
 			const auto& nextToken = prooduction.right[lrproduction.pos];
-			trans[nextToken].push_back(lrproduction);
+			auto newLR = lrproduction;
+			newLR.pos++;
+			trans[nextToken].push_back(newLR);
 		}
 		else {//TODO X -> abc.
 
@@ -80,8 +84,7 @@ int LRBuilder::buildState(const vector<LRProduction> initProduction) {
 		const auto& productions = tran.second;
 		state.action[token] = buildState(productions);
 	}
-	int id = lrstatus.size();
-	lrstatus[state] = id;
+	lrstatus_id[id] = state;
 	return id;
 }
 
@@ -167,26 +170,27 @@ vector<int> LRBuilder::getFirst(const vector<int>& tokens) {
 int LRBuilder::findState(const LRState& state) {
 	for (const auto& s : lrstatus) {
 		if (s.first.productions == state.productions)
-			s.second;
+			return s.second;
 	}
 	return -1;
 }
 
 void LRBuilder::buildTable(const string& start) {
 	const int stateCnt = lrstatus.size();
+	const int tokenCnt = tokenManager.size()-1;
 	//initialize the table,set all state to error
 	for (int i = 0; i < stateCnt; i++) {
-		lrTable.push_back(vector<LRTableItem>(stateCnt));
+		lrTable.push_back(vector<LRTableItem>(tokenCnt));
 		auto& row = lrTable.back();
-		for (int j = 0; j < stateCnt; j++) {
+		for (int j = 0; j < tokenCnt; j++) {
 			row[j].action = ERROR;
 			row[j].target = -1;
 		}
 	}
 	//set table items
-	for (const auto& stateWithId : lrstatus) {
-		auto& state = stateWithId.first;
-		auto& id = stateWithId.second;
+	for (const auto& stateWithId : lrstatus_id) {
+		auto& state = stateWithId.second;
+		auto& id = stateWithId.first;
 		auto& row = lrTable[id];
 		for (auto& trans : state.action) {
 			auto& token = trans.first;
@@ -195,7 +199,7 @@ void LRBuilder::buildTable(const string& start) {
 			if (tokenManager.isTerminal(token)) {
 				row[tokenId].action = LRAction::SHIFT;
 			}
-			else {
+			else if(token.name != start){
 				row[tokenId].action = LRAction::GOTO;
 			}
 			row[tokenId].target = target;

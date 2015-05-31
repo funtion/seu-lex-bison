@@ -80,6 +80,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CompilerGenerater.h" />
+    <ClInclude Include="LALRBuilder.h" />
+    <ClInclude Include="LALRProduction.h" />
+    <ClInclude Include="LALRState.h" />
     <ClInclude Include="LRBuilder.h" />
     <ClInclude Include="LRProduction.h" />
     <ClInclude Include="LRState.h" />
@@ -95,6 +98,9 @@
     <ClCompile Include="CompilerGenerater.cpp">
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
     </ClCompile>
+    <ClCompile Include="LALRBuilder.cpp" />
+    <ClCompile Include="LALRProduction.cpp" />
+    <ClCompile Include="LALRState.cpp" />
     <ClCompile Include="LRBuilder.cpp" />
     <ClCompile Include="LRProduction.cpp" />
     <ClCompile Include="LRState.cpp" />

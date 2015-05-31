@@ -11,10 +11,11 @@ LALRBuilder::LALRBuilder(TokenManager& tokenManager, ProductionManager& producti
 
 //build LALR(1) status
 int LALRBuilder::build(const string& start) {
+	auto& endToken = tokenManager.buildToken("_LR_END", "", LEFT, 0);
 	string& startName = start + "_LR";
 	auto& production = productionManager.buildProduction(startName, { start }, "");
 	int id = productionManager.getProductionID(production);//查找产生式 没有则添加
-	auto& endToken = tokenManager.buildToken("_LR_END", "", LEFT, 0);
+	
 	vector<int>endid;
 	int endId = tokenManager.getTokenId(endToken.name);
 	endid.push_back(endId);
@@ -27,6 +28,7 @@ int LALRBuilder::build(const string& start) {
 
 
 int LALRBuilder::buildState(const vector<LALRProduction> initProduction) {
+	cout << "build state\n";
 	//build Closure
 	LALRState state{ initProduction, {} };
 	while (true) {
@@ -73,6 +75,7 @@ int LALRBuilder::buildState(const vector<LALRProduction> initProduction) {
 	}
 	int id = lalrstatus.size();
 	lalrstatus[state] = id;
+	cout << "lalr state" << id << endl;
 	// build GOTO
 	map<Token, vector<LALRProduction>> trans;
 	for (const auto& lrproduction : state.productions) {
@@ -216,12 +219,12 @@ int LALRBuilder::findState(LALRState& state) {
 void LALRBuilder::buildTable(const string& start) {
 	
 	const int stateCnt = lalrstatus.size();
-	const int tokenCnt = tokenManager.size();
+	const int tokenCnt = tokenManager.size()-1;
 	//initialize the table,set all state to error
 	for (int i = 0; i < stateCnt; i++) {
 		lrTable.push_back(vector<LALRTableItem>(tokenCnt));
 		auto& row = lrTable.back();
-		for (int j = 0; j < stateCnt; j++) {
+		for (int j = 0; j < tokenCnt; j++) {
 			row[j].action = ERROR;
 			row[j].target = -1;
 		}
@@ -238,7 +241,7 @@ void LALRBuilder::buildTable(const string& start) {
 			if (tokenManager.isTerminal(token)) {
 				row[tokenId].action = LRAction::SHIFT;
 			}
-			else {
+			else if (token.name != start){
 				row[tokenId].action = LRAction::GOTO;
 			}
 			row[tokenId].target = target;

@@ -31,7 +31,7 @@ int YaccReader::read()
 	}
 
 	readtoken(tokenDefine);
-//	readproduct(productionDefine);
+	readproduct(productionDefine);
 	return 0;
 }
 
@@ -184,7 +184,7 @@ void YaccReader::readtoken(string tokenDefine)
 	}	
 	for (auto& i : tokenManager.allToken())
 	{
-		cout << "\n----------------------\n" << i.first << "--" << i.second;
+		cout << "\n-------alltoken-------\n" << i.first << "--" << i.second;
 	}
 
 	/*下面的代码用来测试*/

@@ -39,6 +39,9 @@ public:
 	void setPrecedence(const string& name, const int precedence) {
 		terminals[tokens[name]].precedence = precedence;
 	}
+	int size()const {
+		return tokens.size();
+	}
 };
 
 #endif //_TOKENMANAGER_H
