@@ -26,12 +26,11 @@ int CompilerGenerater::generate(const string& tplPath, const string& outPath) {
 		lrTable << "},\n";
 	}
 	lrTable << "};\n";
-	string lrTableString;
-	lrTable >> lrTableString;
+	string lrTableString = lrTable.str();
 	stringstream productions;
 	auto &productionManager = builder.productionManager;
-	productions += "//[id,left,num,right....]\n";
-	productions += "int productions[][10]={\n";
+	productions << "//[id,left,num,right....]\n";
+	productions << "int productions[][10]={\n";
 	for (auto& pro : productionManager.productions) {
 		//[id,left,num,right....]
 		productions << "{" << pro.first<<","<<pro.second.left.name << "," << pro.second.right.size() << ",";
@@ -41,8 +40,7 @@ int CompilerGenerater::generate(const string& tplPath, const string& outPath) {
 		productions << "}\n";
 	}
 	productions << "};\n";
-	string productionString;
-	productions >> productionString;
+	string productionString = productions.str();
 	fprintf(outFile, tpl, reader.userHeader.c_str(), lrTableString.c_str(), productionString.c_str(), reader.userCode.c_str());
 	delete[] tpl;
 	fclose(tplFile);

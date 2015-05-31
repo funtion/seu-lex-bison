@@ -24,12 +24,12 @@ int _tmain(int argc, char* argv[])
 	YaccReader reader(file, tokenManager, productionManager);
 	reader.read();
 	LRBuilder builder(tokenManager,productionManager);
-	//out << "[!!!!]start is set to e" << endl;
-	//builder.build("e");
+	cout << "[!!!!]start is set to e" << endl;
+	builder.build("e");
 	
-	//CompilerGenerater generater(reader,builder);
-	//generater.generateTableH("tab.h");
-	//generater.generate("result.tpl", "compiler.cpp");
+	CompilerGenerater generater(reader,builder);
+	generater.generateTableH("output/tab.h");
+	generater.generate("result.tpl", "output/compiler.cpp");
 	return 0;
 }
 
