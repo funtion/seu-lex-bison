@@ -111,7 +111,7 @@ int LRBuilder::initFirst() {
 				}
 			}
 			int lid = tokenManager.getTokenId(production.left.name);
-			if (canNull) {
+			if (canNull && nullable[lid] == false) {
 				nullable[lid] = true;
 				changed = true;
 			}
