@@ -17,6 +17,10 @@ public:
 	bool operator==(const LRProduction& r)const {
 		return productionId == r.productionId && pos == r.pos && lookAhead == r.lookAhead;
 	}
+	bool LALRequal(const LRProduction& r)const{
+		return  productionId == r.productionId && pos == r.pos && lookAhead != r.lookAhead;
+
+	}
 };
 
 #endif //_LRPRODUCTION_H

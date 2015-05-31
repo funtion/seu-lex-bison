@@ -235,9 +235,6 @@ void YaccReader::readproduct(string productionDefine)
 		else if (flag ==2 && (temp[i] == '|'))//状态2遇到|
 		{
 			productionManager.buildProduction(left, right, action);
-		/*	cout << "\nleft:" << left << "----right:";
-			for (int i = 0; i <right.size(); i++)
-				cout << right[i]<<" ";*/
 			right.clear();
 			
 		}
@@ -246,9 +243,6 @@ void YaccReader::readproduct(string productionDefine)
 			productionManager.buildProduction(left, right, action);
 			buffer[n] = left;
 			n++;
-			/*	cout << "\nleft:" << left << "----right:";
-				for (int i = 0; i <right.size(); i++)
-				cout << right[i] <<" ";*/
 			left = "";
 			action = "";
 			right.clear();
@@ -281,18 +275,11 @@ void YaccReader::readproduct(string productionDefine)
 	if (left != "")
 	{
 		productionManager.buildProduction(left, right, action);
-	/*	cout << "\nleft:" << left << "----right:";
-		for (int i = 0; i < right.size(); i++)
-			cout << right[i] << " ";*/
 		buffer[n] = left;
 		left = "";
 		action = "";
 		right.clear();
 	}
 	start = buffer[0];//标记开始符
-	/*for (const auto& i: productionManager.all())
-	{
-		cout << i.first.left.name << i.first.right.size();
-	}*/
 	
 }

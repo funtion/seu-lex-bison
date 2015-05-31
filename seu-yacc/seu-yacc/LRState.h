@@ -17,6 +17,15 @@ public:
 		}
 		return productions.size() < r.productions.size();
 	}
+
+	bool addLALR(const LRState& r){
+
+		for (size_t i = 0; i < min(productions.size(), r.productions.size()); i++)
+		{
+			if (productions[i].LALRequal(r.productions[i]))
+				productions.push_back(r.productions[i]);
+		}
+	}
 };
 
 #endif //_LRSTATE_H
