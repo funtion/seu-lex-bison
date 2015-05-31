@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "LALRBuilder.h"
+#include "LRBuilder.h"
 
 
 LALRBuilder::LALRBuilder(TokenManager& tokenManager, ProductionManager& productionManager) :tokenManager(tokenManager), productionManager(productionManager) {
@@ -213,6 +214,7 @@ int LALRBuilder::findState(LALRState& state) {
 
 
 void LALRBuilder::buildTable(const string& start) {
+	
 	const int stateCnt = lalrstatus.size();
 	const int tokenCnt = tokenManager.size();
 	//initialize the table,set all state to error
@@ -234,10 +236,10 @@ void LALRBuilder::buildTable(const string& start) {
 			auto& target = trans.second;
 			int tokenId = tokenManager.getTokenId(token.name);
 			if (tokenManager.isTerminal(token)) {
-				row[tokenId].action = LALRAction::SHIFT;
+				row[tokenId].action = LRAction::SHIFT;
 			}
 			else {
-				row[tokenId].action = LALRAction::GOTO;
+				row[tokenId].action = LRAction::GOTO;
 			}
 			row[tokenId].target = target;
 		}
@@ -246,15 +248,15 @@ void LALRBuilder::buildTable(const string& start) {
 			if ((size_t)lrProduction.pos == production.right.size()) {// s -> abc.
 				if (production.left.name == start + "'") {//S' -> s.
 					for (int i = 0; i < lrProduction.lookAhead.size();i++)
-						row[lrProduction.lookAhead[i]].action = LALRAction::ACCEPT;
+						row[lrProduction.lookAhead[i]].action = LRAction::ACCEPT;
 				}
 				else {
 					for (int i = 0; i < lrProduction.lookAhead.size(); i++){
-						if (row[lrProduction.lookAhead[i]].action == LALRAction::ERROR) {
-							row[lrProduction.lookAhead[i]].action = LALRAction::REDUCE;
+						if (row[lrProduction.lookAhead[i]].action == LRAction::ERROR) {
+							row[lrProduction.lookAhead[i]].action = LRAction::REDUCE;
 							row[lrProduction.lookAhead[i]].target = lrProduction.productionId;
 						}
-						else if (row[lrProduction.lookAhead[i]].action == LALRAction::SHIFT) {
+						else if (row[lrProduction.lookAhead[i]].action == LRAction::SHIFT) {
 							//TODO shift/reduce conflict
 							auto last = production.right[0];
 							for (auto& token : production.right) {
@@ -265,13 +267,13 @@ void LALRBuilder::buildTable(const string& start) {
 							int lastId = tokenManager.getTokenId(last.name);
 							int pri = tokenManager.comp(lastId, lrProduction.lookAhead[i]);
 							if (pri == 1) {
-								row[lrProduction.lookAhead[i]].action = LALRAction::REDUCE;
+								row[lrProduction.lookAhead[i]].action = LRAction::REDUCE;
 								row[lrProduction.lookAhead[i]].target = lrProduction.productionId;
 							}
 							else if (pri == 0) {//equal priority or not compireable
 								TerminalToken& tlast = (TerminalToken&)last;
 								if (tlast.associativity == LEFT) {
-									row[lrProduction.lookAhead[i]].action = LALRAction::REDUCE;
+									row[lrProduction.lookAhead[i]].action = LRAction::REDUCE;
 									row[lrProduction.lookAhead[i]].target = lrProduction.productionId;
 								}
 							}

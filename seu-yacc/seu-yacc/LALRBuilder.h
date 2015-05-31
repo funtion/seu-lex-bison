@@ -3,18 +3,12 @@
 #include "ProductionManager.h"
 #include "LALRProduction.h"
 #include "LALRState.h"
+#include "LRBuilder.h"
 #include "TOKEN.h"
 
-enum LALRAction {//ÓïÒå¶¯×÷
-	SHIFT = 0, 
-	REDUCE = 1,
-	GOTO = 2,
-	ACCEPT = 3,
-	ERROR = 4
-};
 
 struct LALRTableItem{
-	LALRAction action;
+	LRAction action;
 	int target;
 };
 
@@ -42,6 +36,9 @@ public:
 	int findState(LALRState& state);
 	int findLALRState(const LALRState&state);
 	vector<vector<LALRTableItem>> lrTable;
+	inline map<LALRState, int> & allStatus() {
+		return lalrstatus;
+	}
 
 };
 
