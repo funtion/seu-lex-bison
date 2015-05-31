@@ -92,7 +92,7 @@ int LRBuilder::buildState(const vector<LRProduction> initProduction) {
 int LRBuilder::initFirst() {
 	const auto& allTerminal = tokenManager.allTerminal();
 	for (auto& token : allTerminal) {
-		first[token.first] = { token.first };
+		first[token.first] = { token.first };//终结符first就是本身
 		nullable[token.first] = token.second.name == "";
 	}
 	const auto& allProduction = productionManager.all();
