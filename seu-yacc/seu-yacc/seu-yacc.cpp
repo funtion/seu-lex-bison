@@ -15,7 +15,7 @@ int _tmain(int argc, char* argv[])
 	}
 	FILE* file;
 	int error;
-	if((error = fopen_s(&file,"D:\\Github\\seu-lex-bison\\seu-yacc\\test\\sample_test.y", "r"))){
+	if((error = fopen_s(&file,"H:\\minic.y", "r"))){
 		cout << "cannot open file ,error code "<< error << endl;
 		return 1;
 	}
@@ -23,15 +23,13 @@ int _tmain(int argc, char* argv[])
 	ProductionManager productionManager(tokenManager);
 	YaccReader reader(file, tokenManager, productionManager);
 	reader.read();
-	cout << "this is Header: "<<reader.tokenDefine;
 	LRBuilder builder(tokenManager,productionManager);
-	cout << "[!!!!]start is set to e" << endl;
-	builder.build("e");
+	//out << "[!!!!]start is set to e" << endl;
+	//builder.build("e");
 	
-	CompilerGenerater generater(reader,builder);
-	generater.generateTableH("output/tab.h");
-	generater.generate("result.tpl", "output/compiler.cpp");
-	
+	//CompilerGenerater generater(reader,builder);
+	//generater.generateTableH("tab.h");
+	//generater.generate("result.tpl", "compiler.cpp");
 	return 0;
 }
 

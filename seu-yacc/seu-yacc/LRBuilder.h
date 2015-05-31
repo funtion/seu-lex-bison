@@ -6,11 +6,11 @@
 #include "TOKEN.h"
 
 enum LRAction {
-	SHIFT=0,
-	REDUCE=1,
-	GOTO=2,
-	ACCEPT=3,
-	ERROR=4
+	SHIFT,
+	REDUCE,
+	GOTO,
+	ACCEPT,
+	ERROR
 };
 
 struct LRTableItem{
@@ -26,7 +26,6 @@ private:
 	TokenManager& tokenManager;
 	ProductionManager& productionManager;
 	map<LRState, int> lrstatus;
-	map<int, LRState > lrstatus_id;
 	map<int, vector<int>> first;
 	map<int, bool> nullable;
 public:

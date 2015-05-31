@@ -47,8 +47,9 @@ int ProductionManager::getProductionID(const Production& procudtion) {
 vector<Production> ProductionManager::getProductions(const NonterminalToken& noterminal) {
 	//TODO all production of a no terminal
 	vector<Production> result;
+	int id = tokenManager.getTokenId(noterminal.name);
 	for (const auto& p : productions) {
-		if (p.second.left.name == noterminal.name) {
+		if (p.first == id) {
 			result.push_back(p.second);
 		}
 	}
