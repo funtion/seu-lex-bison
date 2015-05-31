@@ -34,6 +34,7 @@ int CompilerGenerater::generate(const string& tplPath, const string& outPath) {
 	lrTable += "};\n";
 	string productions;
 	auto &productionManager = builder.productionManager;
+	productions += "//[id,left,num,right....]\n";
 	productions += "int productions[][10]={\n";
 	for (auto& pro : productionManager.productions) {
 		//[id,left,num,right....]
@@ -58,7 +59,8 @@ int CompilerGenerater::generateTableH(const string& outPath) {
 	stream << "#ifndef _TABLE_H\n";
 	stream << "#define _TABLE_H\n\n\n";
 	for (auto& token : reader.tokenManager.tokens) {
-		stream << "#define " << token.first << " " << token.second << '\n';
+		if (token.first != "")
+			stream << "#define " << token.first << " " << token.second << '\n';
 	}
 	stream << "\n#endif\n";
 	return 0;
