@@ -6,6 +6,7 @@
 #include "TokenManager.h"
 #include "ProductionManager.h"
 #include "LRBuilder.h"
+#include "LALRBuilder.h"
 #include "CompilerGenerater.h"
 int _tmain(int argc, char* argv[])
 {
@@ -15,7 +16,7 @@ int _tmain(int argc, char* argv[])
 	}
 	FILE* file;
 	int error;
-	if((error = fopen_s(&file,"H:\\minic.y", "r"))){
+	if((error = fopen_s(&file,"H:\\a.y", "r"))){
 		cout << "cannot open file ,error code "<< error << endl;
 		return 1;
 	}
@@ -23,13 +24,30 @@ int _tmain(int argc, char* argv[])
 	ProductionManager productionManager(tokenManager);
 	YaccReader reader(file, tokenManager, productionManager);
 	reader.read();
-	LRBuilder builder(tokenManager,productionManager);
-	//out << "[!!!!]start is set to e" << endl;
-	//builder.build("e");
+	LRBuilder lrbuilder(tokenManager, productionManager);
+	LALRBuilder lalrbuilder(tokenManager,productionManager);
+
+	cout << "[!!!!]start is set to e" << endl;
+	lalrbuilder.build("e");
 	
-	//CompilerGenerater generater(reader,builder);
-	//generater.generateTableH("tab.h");
-	//generater.generate("result.tpl", "compiler.cpp");
+
+	for (auto& i : lalrbuilder.allStatus())
+	{
+		cout << "\n------lalrstatus-----------\n" << "--" << i.second;
+	}
+
+	cout << "\n------   lalrtable   -----\n";
+	for (int i = 0; i < lalrbuilder.lrTable.size(); i++)
+	{
+		for (int j = 0; j < lalrbuilder.lrTable[i].size(); j++)
+			cout<<lalrbuilder.lrTable[i][j].action<<endl;
+	}
+
+
+	CompilerGenerater generater(reader, lrbuilder, lalrbuilder);
+	generater.generateTableHLR("output/tab1.h");
+	//generater.generateLR("result.tpl", "output/compiler.cpp");
+	generater.generateLALR("result.tpl", "output/compiler1.cpp");
 	return 0;
 }
 
