@@ -113,13 +113,16 @@ void regex_preprocess(char* regex, queue<RE> &re_queue)
 	for (c = *regex; c != '\0'; regex++, c = *regex) {
 		/* */
 		if (escape) {
-			if (c == 'n')
+			switch (c) {
+			case 'n':
 				re_queue.push( RE('n') );
-			if (c == 't')
+				break;
+			case 't':
 				re_queue.push( RE('t') );
-			else
+				break;
+			default:
 				re_queue.push( RE(c) );
-
+			}
 			continue;
 		}
 

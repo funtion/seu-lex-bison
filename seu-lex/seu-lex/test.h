@@ -90,10 +90,21 @@ void test_regex2nfa()
 	printf("\nchsr set of nfa:");
 	for (csi = cs.begin(); csi != cs.end(); csi++)
 		printf("%c ", *csi);
+	printf("\n");
 
 	/* test dfa **************************/
 	DFA dfa;
-	dfa.nfa_to_dfa(table, nfa);
-	dfa.print_dfa();
+	dfa_ini(dfa);
+	nfa_to_dfa(table, nfa, dfa);
+	print_dfa(dfa);
 }
 
+
+void test_char()
+{
+	int c;
+	// for (c='!'; c<'~'; c++)
+	// 	printf("%c :%d\n", c, c);
+	for (c=1; c<128; c++)
+		printf("%c :%d\n", c,c);
+}
