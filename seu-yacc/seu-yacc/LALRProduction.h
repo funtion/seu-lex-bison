@@ -14,8 +14,13 @@ public:
 			return productionId < r.productionId;
 		if (pos != r.pos)
 			return pos < r.pos;
+		if (lookAhead.size()!=r.lookAhead.size())
+			return lookAhead.size() < r.lookAhead.size();
+		for (int i = 0; i < lookAhead.size();i++){
+			if (lookAhead[i] != r.lookAhead[i])
+				return lookAhead[i] < r.lookAhead[i];
+		}
 		return false;
-		//return lookAhead < r.lookAhead;
 	}
 	void  setlookahead( vector<int>newahead){
 		this->lookAhead.clear();

@@ -28,8 +28,8 @@ int LALRBuilder::build(const string& start) {
 
 
 int LALRBuilder::buildState(const vector<LALRProduction> initProduction) {
-	cout << "build state; productionid:";
-	cout << initProduction[0].productionId<<endl;
+	cout << "build state; productionsize:";
+	cout << initProduction.size()<<endl;
 	//build Closure
 	LALRState state{ initProduction, {} };
 	while (true) {
@@ -76,7 +76,7 @@ int LALRBuilder::buildState(const vector<LALRProduction> initProduction) {
 	}
 	int id = lalrstatus.size();
 	lalrstatus[state] = id;
-	cout << "lalr state id:" << id << endl;
+	cout << "lalr state id:" << id <<"--states size"<<lalrstatus.size()<<endl;
 	// build GOTO
 	map<Token, vector<LALRProduction>> trans;
 	for (const auto& lrproduction : state.productions) {
@@ -184,37 +184,42 @@ vector<int> LALRBuilder::getFirst(const vector<int>& tokens) {
 
 int LALRBuilder::findState(LALRState& state) {
 	for (auto& s : lalrstatus) {
+
 		int m = s.first.productions.size();
 		int i = 0;
 		LALRState Updates;
-		for (; i < m; i++)
+		if (m== state.productions.size())
 		{
-			LALRProduction newproduciton;
-			if (s.first.productions[i].LALRequal(state.productions[i]))//如果两个状态的产生式除lookahead外都相同
+			for (; i < m; i++)
 			{
-				newproduciton.productionId = state.productions[i].productionId;
-				newproduciton.pos = state.productions[i].pos;
-				vector<int>newahead;
-				newahead = s.first.productions[i].lookAhead;
-				int l = state.productions[i].lookAhead.size();//lookahead 是vector形式
-				for (int j = 0; j < l; j++)
+				LALRProduction newproduciton;
+				if (s.first.productions[i].LALRequal(state.productions[i]))//如果两个状态的产生式除lookahead外都相同
 				{
-					newahead.push_back(state.productions[i].lookAhead[j]);//将两个lookahead合并
+					newproduciton.productionId = state.productions[i].productionId;
+					newproduciton.pos = state.productions[i].pos;
+					vector<int>newahead;
+					newahead = s.first.productions[i].lookAhead;
+					int l = state.productions[i].lookAhead.size();//lookahead 是vector形式
+					for (int j = 0; j < l; j++)
+					{
+						newahead.push_back(state.productions[i].lookAhead[j]);//将两个lookahead合并
+					}
+					sort(newahead.begin(), newahead.end());
+					newahead.erase(unique(newahead.begin(), newahead.end()), newahead.end());
+					newproduciton.lookAhead = newahead;
+					Updates.productions.push_back(newproduciton);
 				}
-				sort(newahead.begin(), newahead.end());
-				newahead.erase(unique(newahead.begin(), newahead.end()), newahead.end());
-				newproduciton.lookAhead = newahead;
-				Updates.productions.push_back(newproduciton);
+				else
+					break;
 			}
-			else
-				break;
-		}
-		if (i == m)//证明两个lalr状态相同，更新状态
-		{
-			lalrstatus[Updates] = s.second;//？会不会替换？
-			lalrstatus_id[s.second] = Updates;
-			return s.second;
-		}		
+			if (i == m)//证明两个lalr状态相同，更新状态
+			{
+				lalrstatus[Updates] = s.second;//？会不会替换？
+				lalrstatus_id[s.second] = Updates;
+				return s.second;
+			}
+		}//end if
+		
 	}
 	return -1;
 }

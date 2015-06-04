@@ -236,7 +236,6 @@ void YaccReader::readproduct(string productionDefine)
 		{
 			productionManager.buildProduction(left, right, action);
 			right.clear();
-			
 		}
 		else if (flag == 2 && (temp[i] == ';'))
 		{
@@ -250,13 +249,13 @@ void YaccReader::readproduct(string productionDefine)
 		}
 		else if (flag == 2 && (temp[i] == '{'))
 		{
-			flag = 3;
+			flag = 4;
 		}
-		else if (flag == 3 && (temp[i]) != '}')
+		else if (flag == 4 && (temp[i]) != '}')
 		{
 			action += temp[i];
 		}
-		else if (flag == 3 && (temp[i]) == '}')//遇到}回到状态2
+		else if (flag == 4 && (temp[i]) == '}')//遇到}回到状态2
 		{
 			flag = 2;
 		}
@@ -264,10 +263,12 @@ void YaccReader::readproduct(string productionDefine)
 		{
 			flag2 = flag;
 			flag = 100;   //在还没读到*/之前不做任何事
+			i++;
 		}
 		else if (temp[i] == '*'&&temp[i + 1] == '/')
 		{
 			flag = flag2;
+			i++;
 		}
 
 	}//end of read
@@ -284,7 +285,12 @@ void YaccReader::readproduct(string productionDefine)
 	cout << "start::" << start<<endl;
 	for (auto& i : productionManager.allproductions())
 	{
-		cout << "\n-------allproductions-------\n" << i.first << "--" << i.second.left.name<<"--";
+		Token emptyt;
+		emptyt.name = "empty";
+		if (i.second.right.size() == 0)
+			i.second.right.push_back(emptyt);
+
+		cout << "\n-------allproductions-------\n" << i.first << "--" << i.second.left.name << "--";
 		for (int j = 0; j < i.second.right.size();j++)
 		{
 			cout << " " << i.second.right[j].name;
