@@ -16,7 +16,7 @@ int _tmain(int argc, char* argv[])
 	}
 	FILE* file;
 	int error;
-	if((error = fopen_s(&file,"H:\\a.y", "r"))){
+	if((error = fopen_s(&file,"H:\\minic.y", "r"))){
 		cout << "cannot open file ,error code "<< error << endl;
 		return 1;
 	}
@@ -26,25 +26,10 @@ int _tmain(int argc, char* argv[])
 	reader.read();
 	LRBuilder lrbuilder(tokenManager, productionManager);
 	LALRBuilder lalrbuilder(tokenManager,productionManager);
-
-	cout << "[!!!!]start is set to e" << endl;
-	//lalrbuilder.build("e");
-	lrbuilder.build("E");
-
-
-	//for (auto& i : lalrbuilder.allStatus())
-	//{
-	//	cout << "\n------lalrstatus-----------\n" << "--" << i.second;
-	//}
-
-	///*cout << "\n------   lalrtable   -----\n";
-	//for (int i = 0; i < lalrbuilder.lrTable.size(); i++)
-	//{
-	//for (int j = 0; j < lalrbuilder.lrTable[i].size(); j++)
-	//cout << lalrbuilder.lrTable[i][j]<< endl;
-	//}
-
-	//*/
+	
+	cout << "\n\n[!!!!]start is set to " << reader.start<< endl;
+	//lalrbuilder.build(reader.start);
+	lrbuilder.build(reader.start);
 	CompilerGenerater generater(reader, lrbuilder, lalrbuilder);
 	generater.generateTableHLR("output/tab.h");
 	generater.generateLR("result.tpl", "output/compiler.cpp");

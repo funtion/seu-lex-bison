@@ -83,9 +83,12 @@ int LALRBuilder::buildState(const vector<LALRProduction> initProduction) {
 		const auto& prooduction = productionManager.getProduction(lrproduction.productionId);
 		if (lrproduction.pos < (int)prooduction.right.size()) {
 			const auto& nextToken = prooduction.right[lrproduction.pos];
+			auto& transInit = trans[nextToken];
 			auto newLR = lrproduction;
 			newLR.pos++;
-			trans[nextToken].push_back(newLR);
+			if (find(transInit.begin(), transInit.end(), newLR) == transInit.end()) {
+				trans[nextToken].push_back(newLR);
+			}
 		}
 		else {//TODO X -> abc.
 

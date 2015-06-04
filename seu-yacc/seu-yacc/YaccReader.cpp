@@ -281,6 +281,7 @@ void YaccReader::readproduct(string productionDefine)
 		right.clear();
 	}
 	start = buffer[0];//标记开始符
+	cout << "start::" << start<<endl;
 	for (auto& i : productionManager.allproductions())
 	{
 		cout << "\n-------allproductions-------\n" << i.first << "--" << i.second.left.name<<"--";

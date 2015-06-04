@@ -26,6 +26,8 @@ int LRBuilder::build(const string& start) {
 int LRBuilder::buildState(const vector<LRProduction> initProduction) {
 	//build Closure
 	LRState state{ initProduction, {} };
+	cout << "build state; production size:";
+	cout << initProduction.size() << endl;
 	while (true) {
 		vector<LRProduction> newProduction;
 		for (const auto& lrproduction : state.productions) {
@@ -61,21 +63,23 @@ int LRBuilder::buildState(const vector<LRProduction> initProduction) {
 	}
 	int sid = findState(state);
 	if (sid != -1) {
-		return sid;//?
+		return sid;
 	}
 	int id = lrstatus.size();
 	lrstatus[state] = id;
 	// build GOTO
+	cout << "state id:" << id<<endl;
 	map<Token, vector<LRProduction>> trans;
 	for (const auto& lrproduction : state.productions) {
 		const auto& prooduction = productionManager.getProduction(lrproduction.productionId);
 		if (lrproduction.pos < (int)prooduction.right.size()) {
 			const auto& nextToken = prooduction.right[lrproduction.pos];
+			auto& transInit = trans[nextToken];
 			auto newLR = lrproduction;
 			newLR.pos++;
+			if (find(transInit.begin(), transInit.end(), newLR) == transInit.end()) {
 			trans[nextToken].push_back(newLR);
-		}
-		else {//TODO X -> abc.
+			}
 
 		}
 	}
