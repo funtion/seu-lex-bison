@@ -28,12 +28,12 @@ int _tmain(int argc, char* argv[])
 	LALRBuilder lalrbuilder(tokenManager,productionManager);
 	
 	cout << "\n\n[!!!!]start is set to " << reader.start<< endl;
-	//lalrbuilder.build(reader.start);
+	lalrbuilder.build(reader.start);
 	lrbuilder.build(reader.start);
 	CompilerGenerater generater(reader, lrbuilder, lalrbuilder);
 	generater.generateTableHLR("output/tab.h");
 	generater.generateLR("result.tpl", "output/compiler.cpp");
-	//generater.generateLALR("result.tpl", "output/compilerLALR.cpp");
+	generater.generateLALR("result.tpl", "output/compilerLALR.cpp");
 	return 0;
 }
 
