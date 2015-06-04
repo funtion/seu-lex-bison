@@ -210,11 +210,11 @@ void YaccReader::readproduct(string productionDefine)
 	for (int i = 0; i < temp.length(); i++)
 	{
 		
-		if ((flag == 1) && ((temp[i] >= 'a'&&temp[i] <= 'z') || (temp[i] >= 'A'&&temp[i] <= 'Z') || (temp[i] == '_')))//×´Ì¬1Óöµ½×ÖÄ¸¡£¶Á×ó²à
+		if ((flag == 1) && ((temp[i] >= 'a'&&temp[i] <= 'z') || (temp[i] >= 'A'&&temp[i] <= 'Z') || (temp[i] == '_') || (temp[i] == '(') || (temp[i] == ')')))//×´Ì¬1Óöµ½×ÖÄ¸¡£¶Á×ó²à
 		{
 			left += temp[i];
 		}
-		else if (flag == 2 && ((temp[i] >= 'a'&&temp[i] <= 'z') || (temp[i] >= 'A'&&temp[i] <= 'Z') || (temp[i]=='_')))//×´Ì¬2Óöµ½×ÖÄ¸¡£¶ÁÓÒ²à
+		else if (flag == 2 && ((temp[i] >= 'a'&&temp[i] <= 'z') || (temp[i] >= 'A'&&temp[i] <= 'Z') || (temp[i] == '_')||(temp[i] == '(') || (temp[i] == ')')))//×´Ì¬2Óöµ½×ÖÄ¸¡£¶ÁÓÒ²à
 		{
 			righttemp += temp[i];
 		}
@@ -281,5 +281,12 @@ void YaccReader::readproduct(string productionDefine)
 		right.clear();
 	}
 	start = buffer[0];//±ê¼Ç¿ªÊ¼·û
-	
+	for (auto& i : productionManager.allproductions())
+	{
+		cout << "\n-------allproductions-------\n" << i.first << "--" << i.second.left.name<<"--";
+		for (int j = 0; j < i.second.right.size();j++)
+		{
+			cout << " " << i.second.right[j].name;
+		}
+	}
 }

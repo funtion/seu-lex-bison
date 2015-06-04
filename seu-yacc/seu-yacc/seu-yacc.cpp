@@ -28,26 +28,27 @@ int _tmain(int argc, char* argv[])
 	LALRBuilder lalrbuilder(tokenManager,productionManager);
 
 	cout << "[!!!!]start is set to e" << endl;
-	lalrbuilder.build("e");
-	lrbuilder.build("e");
+	//lalrbuilder.build("e");
+	lrbuilder.build("E");
 
-	for (auto& i : lalrbuilder.allStatus())
-	{
-		cout << "\n------lalrstatus-----------\n" << "--" << i.second;
-	}
 
-	/*cout << "\n------   lalrtable   -----\n";
-	for (int i = 0; i < lalrbuilder.lrTable.size(); i++)
-	{
-	for (int j = 0; j < lalrbuilder.lrTable[i].size(); j++)
-	cout << lalrbuilder.lrTable[i][j]<< endl;
-	}
+	//for (auto& i : lalrbuilder.allStatus())
+	//{
+	//	cout << "\n------lalrstatus-----------\n" << "--" << i.second;
+	//}
 
-	*/
+	///*cout << "\n------   lalrtable   -----\n";
+	//for (int i = 0; i < lalrbuilder.lrTable.size(); i++)
+	//{
+	//for (int j = 0; j < lalrbuilder.lrTable[i].size(); j++)
+	//cout << lalrbuilder.lrTable[i][j]<< endl;
+	//}
+
+	//*/
 	CompilerGenerater generater(reader, lrbuilder, lalrbuilder);
 	generater.generateTableHLR("output/tab.h");
 	generater.generateLR("result.tpl", "output/compiler.cpp");
-	generater.generateLALR("result.tpl", "output/compiler1.cpp");
+	//generater.generateLALR("result.tpl", "output/compilerLALR.cpp");
 	return 0;
 }
 

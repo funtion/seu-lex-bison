@@ -38,6 +38,9 @@ public:
 	map<Production, int>& all() {
 		return productionsID;
 	}
+	inline map<int, Production>& allproductions() {
+		return productions;
+	}
 };
 
 #endif //_PRODUCTIONMANAGER_H

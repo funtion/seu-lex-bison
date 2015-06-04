@@ -28,7 +28,8 @@ int LALRBuilder::build(const string& start) {
 
 
 int LALRBuilder::buildState(const vector<LALRProduction> initProduction) {
-	cout << "build state\n";
+	cout << "build state; productionid:";
+	cout << initProduction[0].productionId<<endl;
 	//build Closure
 	LALRState state{ initProduction, {} };
 	while (true) {
@@ -75,7 +76,7 @@ int LALRBuilder::buildState(const vector<LALRProduction> initProduction) {
 	}
 	int id = lalrstatus.size();
 	lalrstatus[state] = id;
-	cout << "lalr state" << id << endl;
+	cout << "lalr state id:" << id << endl;
 	// build GOTO
 	map<Token, vector<LALRProduction>> trans;
 	for (const auto& lrproduction : state.productions) {
@@ -122,7 +123,7 @@ int LALRBuilder::initFirst() {
 				}
 			}
 			int lid = tokenManager.getTokenId(production.left.name);
-			if (canNull) {
+			if (canNull&& nullable[lid] == false) {
 				nullable[lid] = true;
 				changed = true;
 			}
