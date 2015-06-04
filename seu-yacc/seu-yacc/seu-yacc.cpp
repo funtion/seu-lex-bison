@@ -29,7 +29,7 @@ int _tmain(int argc, char* argv[])
 
 	cout << "[!!!!]start is set to e" << endl;
 	//lalrbuilder.build("e");
-	lrbuilder.build("e");
+	lrbuilder.build("E");
 
 	//for (auto& i : lalrbuilder.allStatus())
 	//{

@@ -61,7 +61,7 @@ int LRBuilder::buildState(const vector<LRProduction> initProduction) {
 	}
 	int sid = findState(state);
 	if (sid != -1) {
-		return sid;//?
+		return sid;
 	}
 	int id = lrstatus.size();
 	lrstatus[state] = id;
@@ -71,12 +71,13 @@ int LRBuilder::buildState(const vector<LRProduction> initProduction) {
 		const auto& prooduction = productionManager.getProduction(lrproduction.productionId);
 		if (lrproduction.pos < (int)prooduction.right.size()) {
 			const auto& nextToken = prooduction.right[lrproduction.pos];
+			auto& transInit = trans[nextToken];
 			auto newLR = lrproduction;
 			newLR.pos++;
-			trans[nextToken].push_back(newLR);
-		}
-		else {//TODO X -> abc.
-
+			if (find(transInit.begin(), transInit.end(), newLR) == transInit.end()) {
+				trans[nextToken].push_back(newLR);
+			}
+			
 		}
 	}
 	for (const auto& tran : trans) {
