@@ -8,22 +8,29 @@
 #define CHAR_NUM 128
 #define MAX_DFA_STATE 1024
 
-typedef int DFA_STATE_ID;
-typedef DFA_STATE_ID *DFA_STATE;
+typedef unsigned int DFA_STATE_ID;
+// typedef DFA_STATE_ID *DFA_STATE;
+struct DFA_STATE
+{
+	bool is_accept;
+	DFA_STATE_ID *next;
+};
+
 typedef DFA_STATE DFA_TABLE[MAX_DFA_STATE];
 	
 struct DFA
 {
 	DFA_STATE_ID id;
-	DFA_TABLE tbl;
+	DFA_TABLE states;
 };
 
-void dfa_state_ini(DFA_STATE state);
+void dfa_state_ini(DFA_STATE &state);
 void dfa_ini(DFA &dfa);
 void dfa_clear(DFA &dfa);
 
 DFA_STATE_ID dfa_add_states(DFA &dfa);
 void dfa_add_edge(DFA_TABLE dfa_tbl, DFA_STATE_ID begin, char c, DFA_STATE_ID end);
+void dfa_set_accept(DFA &dfa, DFA_STATE_ID s);
 	
 void nfa_to_dfa(NFA_TABLE nfa_tbl, NFA nfa, DFA &dfa);
 void dfa_mini(DFA &dfa);

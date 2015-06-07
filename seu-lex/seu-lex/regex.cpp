@@ -125,6 +125,10 @@ void regex_preprocess(char* regex, queue<RE> &re_queue)
 			}
 			continue;
 		}
+		if (c == '\\') {
+			escape = true;
+			continue;
+		}
 
 		if (literal) {
 			if (c == '"') {
@@ -169,10 +173,6 @@ void regex_preprocess(char* regex, queue<RE> &re_queue)
 
 		/* */
 		switch (c) {
-		case '\\':
-			escape = true;
-			continue;
-			break;
 		case '"':
 			literal = true;
 			re_queue.push( RE(left_pare) );

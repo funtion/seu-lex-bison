@@ -2,6 +2,7 @@
 #include "regex.h"
 #include "nfa.h"
 #include "dfa.h"
+#include "reader.h"
 
 void test_nfa(void)
 {
@@ -93,8 +94,10 @@ void test_regex2nfa()
 	printf("\n");
 
 	/* test dfa **************************/
+	printf("\ncreate dfa...\n");
 	DFA dfa;
 	dfa_ini(dfa);
+	printf("\nnfa to dfa.....\n");
 	nfa_to_dfa(table, nfa, dfa);
 	print_dfa(dfa);
 }
@@ -107,4 +110,57 @@ void test_char()
 	// 	printf("%c :%d\n", c, c);
 	for (c=1; c<128; c++)
 		printf("%c :%d\n", c,c);
+}
+
+
+void test_reader()
+{
+	FILE* lexl = fopen("E:\\lex.l", "r");
+
+	string user_code;
+	string regex;
+	string action;
+	string code;
+
+	map<string, string> definitions;
+	map<string, string>::iterator iter;
+
+	map<string, string> regex_action;
+	map<string, string>::iterator ra;
+
+	bool def_sec_end = false;
+	bool rule_sec_end = false;
+
+	user_code = read_block(lexl, &def_sec_end);
+	if (!def_sec_end)
+		read_definition(lexl, &def_sec_end, definitions);
+
+	while (!rule_sec_end) {
+		regex = read_regex(lexl, &rule_sec_end);
+		action = read_action(lexl);
+		if (regex != "")
+			regex_action[regex] = action;
+	}
+
+	code = read_code(lexl);
+
+	cout << "literal block ----------------------------------" << endl;
+	cout << user_code << endl;
+
+	cout << "definitions ------------------------------------" << endl;
+	for (iter = definitions.begin(); iter != definitions.end(); iter++) {
+		cout << iter->first << " <---> " ;
+		cout << iter->second << endl;
+	}
+
+	cout << "regex  action ----------------------------------" << endl;
+	for (iter = regex_action.begin(); iter != regex_action.end(); iter++) {
+		cout << iter->first << " <---> " ;
+		cout << iter->second << endl;
+	}
+
+	cout << "code section ----------------------------------" << endl;
+	cout << code << endl;
+
+	fclose(lexl);
 }
