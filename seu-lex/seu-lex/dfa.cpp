@@ -1,6 +1,29 @@
 #include "stdafx.h"
 #include "dfa.h"
 
+/*
+  nfa_merge
+  merge all nfas to one
+*/
+NFA nfa_merge(NFA_TABLE table, NFA_STATE_ID *id, vector<THESEUS> &ships)
+{
+	NFA_STATE_ID ini = creat_nfa_state(table, id);
+	NFA_STATE_ID acc = creat_nfa_state(table, id);
+
+	unsigned int i;
+	for (i=0; i<ships.size(); i++) {
+		nfa_epsilon_edge(table, ini, ships[i].nfa.initial);
+		nfa_epsilon_edge(table, ships[i].nfa.accept, acc);
+	}
+	
+	return NFA(ini, acc);
+}
+
+
+
+
+
+
 void dfa_state_ini(DFA_STATE &state)
 {
 	int i;
@@ -58,7 +81,7 @@ void dfa_set_accept(DFA &dfa, DFA_STATE_ID s)
 
 
 
-void nfa_to_dfa(NFA_TABLE nfa_tbl, NFA nfa, DFA &dfa)
+void nfa_to_dfa(NFA_TABLE nfa_tbl, NFA nfa, DFA &dfa, vector<THESEUS> &ships)
 {
 	dfa_clear(dfa);
 
@@ -66,8 +89,16 @@ void nfa_to_dfa(NFA_TABLE nfa_tbl, NFA nfa, DFA &dfa)
 	vector<idmap>::size_type vt1, vt2;
 	idmap imtemp;
 	
+	vector<THESEUS>::iterator shipsit;
+
 	set<char> char_set = nfa_char_set(nfa_tbl, nfa);
 	set<char>::iterator csi;
+
+	printf("char set: \n");					////////////////////////////////
+	for (csi = char_set.begin(); csi != char_set.end(); csi++)
+		printf("%c ", *csi);
+	printf("********************************************\n");
+
 
 	DFA_STATE_ID new_state;
 	bool is_new_state;
@@ -94,9 +125,15 @@ void nfa_to_dfa(NFA_TABLE nfa_tbl, NFA nfa, DFA &dfa)
 				v.push_back(imtemp);
 				new_state = dfa_add_states(dfa);
 				dfa_add_edge(dfa, vt1, *csi, new_state);
-				if (imtemp.find(nfa.accept) != imtemp.end())	/* is accept state? */
+				if (imtemp.find(nfa.accept) != imtemp.end()) { /* is accept state? */
 					dfa_set_accept(dfa, new_state);
-				//	accept.insert(states.size()-1);
+					for (shipsit = ships.begin(); shipsit != ships.end(); shipsit++) {
+						if (imtemp.find(shipsit->nfa.accept) != imtemp.end()) {
+							shipsit->dfa_states.push_back(new_state);
+							break;
+						}
+					}
+				}
 			}
 		}
 	}
