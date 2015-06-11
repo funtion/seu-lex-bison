@@ -89,7 +89,7 @@ NFA nfa_zero_one(NFA_TABLE table, NFA_STATE_ID *id, NFA n);
 NFA regex_to_nfa(queue<RE> &regex, NFA_TABLE table, NFA_STATE_ID *id);
 void foo(NFA_TABLE table, NFA_STATE_ID *id, re_type op, stack<NFA> &nfa);
 
-NFA nfa_merge(NFA_TABLE table, NFA_STATE_ID *id, vector<NFA> v);
+
 
 
 /* closure */

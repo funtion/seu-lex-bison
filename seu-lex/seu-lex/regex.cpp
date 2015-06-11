@@ -22,7 +22,7 @@ int re_prio(re_type op)
 
 
 /* regex_check - check the syntax of a regular expression */
-bool regex_check(char *regex)
+bool regex_check(string &regex)
 {
 	char c;
 	int parenthesis = 0;
@@ -30,8 +30,12 @@ bool regex_check(char *regex)
 	int brace = 0;
 	bool quote = false;
 	bool escape = false;
+	int length, i;
 
-	for (c = *regex; c != '\0'; regex++, c = *regex) {
+	length = regex.length();
+	for (i = 0; i < length; i++) {
+		c = regex[i];
+
 		if (escape) {
 			escape = false;
 			continue;
@@ -91,6 +95,72 @@ bool regex_check(char *regex)
 }
 
 
+
+
+
+void regex_substitute(string &regex, map<string, string> &definitions)
+{
+	bool sub = false;
+	bool escape = false;
+	bool bucket = false;	
+	bool literal = false;
+	int pos, len;
+	int i;
+	string name = "";
+
+	for (i = 0; i < regex.length(); i++) {
+
+		if (sub) {
+			if (regex[i] == '}') {
+				len = i - pos + 1;
+				name = regex.substr(pos+1, len-2);
+				if (definitions.find(name) != definitions.end()) {
+					regex.replace(pos, len, definitions[name]);
+					i += (definitions[name].length() - len );
+				} else {
+					fprintf(stderr, "regex substitute no found: %s\n", "");
+					exit(1);
+				}
+				sub = false;
+			}
+			continue;
+		}
+
+		if (escape) {
+			escape = false;
+			continue;
+		}
+		if (regex[i] == '\\') {
+			escape = true;
+			continue;
+		}
+
+		if (bucket) {
+			if (regex[i] == ']')
+				bucket = false;
+			continue;
+		}
+		if (literal) {
+			if (regex[i] == '"')
+				literal = false;
+			continue;
+		}
+
+		switch (regex[i]) {
+		case '[':
+			bucket = true;
+			break;
+		case '"':
+			literal = true;
+			break;
+		case '{':
+			pos = i;
+			sub = true;
+		}
+	}
+}
+
+
 /*
   regex_preprocess
   transfer a expanded form regular expression to a queue of RE struct.
@@ -100,29 +170,45 @@ bool regex_check(char *regex)
   TODO:
   add concat when between quotes
 */
-void regex_preprocess(char* regex, queue<RE> &re_queue)
+void regex_preprocess(string &regex, queue<RE> &re_queue)
 {
 	char c;
 	bool escape = false;	/* after \     */ 
 	bool scope = false;		/* between [ ] */
 	bool literal = false;	/* between " " */
 	bool add_concat = false;/* need to add a concat before procces next */
+	bool add_uni = false;
 	RE temp;
 	RE conc;
+	int length, i;
 
-	for (c = *regex; c != '\0'; regex++, c = *regex) {
+	length = regex.length();
+	for (i = 0; i < length; i++) {
+		c = regex[i];
+
 		/* */
 		if (escape) {
 			switch (c) {
 			case 'n':
-				re_queue.push( RE('n') );
+				re_queue.push( RE('\n') );
 				break;
 			case 't':
-				re_queue.push( RE('t') );
+				re_queue.push( RE('\t') );
 				break;
 			default:
 				re_queue.push( RE(c) );
 			}
+			escape = false;
+			continue;
+		}
+		if (c == '\\') {
+			if (add_concat)
+				re_queue.push( RE(concat) );
+			else if (scope && add_uni)
+				re_queue.push( RE(uni) );
+			else if (scope && !add_uni)
+				add_uni = true;
+			escape = true;
 			continue;
 		}
 
@@ -141,11 +227,12 @@ void regex_preprocess(char* regex, queue<RE> &re_queue)
 				scope = false;		
 				re_queue.push( RE(right_pare) );
 				add_concat = true;
+				add_uni = false;
 				continue;
 			} else if (c == '-') {
-				char lc = *(regex - 1);
-				char hc = *(regex + 1);
-				regex++;
+				char lc = regex[i-1];
+				char hc = regex[i+1];
+				i++;
 
 				if (isalnum(lc) && isalnum(hc) && lc<hc) {
 					for (++lc; lc <= hc; lc++) {
@@ -153,26 +240,24 @@ void regex_preprocess(char* regex, queue<RE> &re_queue)
 						re_queue.push( RE(lc) );
 					}
 				} else {
-					cout << "error: regular expression is not correct" << endl;
+					fprintf(stderr, "regex syntex error: %s\n", regex.c_str());
 					exit(1);
 				}
 
 				continue;
 			} else {
-				if (*(regex - 1) != '[')	/* not the 1st char in [ ] */
-					re_queue.push( RE(uni) );		/* push union */
-				re_queue.push( RE(c) );				/* push char */
+				if (add_uni)
+					re_queue.push( RE(uni) );
+				else
+					add_uni = true;
 
+				re_queue.push( RE(c) );				/* push char */
 				continue;
 			}			
 		}
 
 		/* */
 		switch (c) {
-		case '\\':
-			escape = true;
-			continue;
-			break;
 		case '"':
 			literal = true;
 			re_queue.push( RE(left_pare) );

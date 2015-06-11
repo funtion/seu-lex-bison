@@ -98,7 +98,8 @@ int CompilerGenerater::generateLALR(const string& tplPath, const string& outPath
 		lrTable += "},\n";
 	}
 	lrTable += "};\n";
-	string productions;
+	string productions = "//[id,left,num,right....]\n";
+
 	auto &productionManager = lalrbuilder.productionManager;
 	productions += "int productions[][10]={\n";
 	for (auto& pro : productionManager.productions) {

@@ -51,10 +51,13 @@ struct RE
 
 
 /* check the syntax of a regular expression */
-bool regex_check(char *regex);
+bool regex_check(string &regex);
+
+/* substitute */
+void regex_substitute(string &regex, map<string, string> &definitions);
 
 /* pre-proccessing */
-void regex_preprocess(char* regex, queue<RE> &re_queue);
+void regex_preprocess(string &regex, queue<RE> &re_queue);
 
 
 
