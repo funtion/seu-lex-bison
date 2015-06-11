@@ -238,24 +238,6 @@ void foo(NFA_TABLE table, NFA_STATE_ID *id,
 }
 
 
-/*
-  nfa_merge
-  merge all nfas to one
-*/
-NFA nfa_merge(NFA_TABLE table, NFA_STATE_ID *id, vector<NFA> v)
-{
-	NFA_STATE_ID ini = creat_nfa_state(table, id);
-	NFA_STATE_ID acc = creat_nfa_state(table, id);
-
-	unsigned int i;
-	for (i=0; i<v.size(); i++) {
-		nfa_epsilon_edge(table, ini, v[i].initial);
-		nfa_epsilon_edge(table, v[i].accept, acc);
-	}
-	
-	return NFA(ini, acc);
-}
-
 
 
 /*
