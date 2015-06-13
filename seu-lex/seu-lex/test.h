@@ -71,14 +71,14 @@ void test_regex2nfa()
 	print_nfa_table(table, id);
 
 	/* test closure *********************/
-	idmap m0, m1;
-	m0.insert(idpair(nfa.initial, false));
+	set<NFA_STATE_ID> m0, m1;
+	m0.insert(nfa.initial);
 
 	m1 = nfa_e_closure(table, m0);
-	idmap::iterator i;
+	set<NFA_STATE_ID>::iterator i;
 	printf("e-closure of s0: ");
 	for (i=m1.begin(); i!=m1.end(); i++)
-		printf("%d ", i->first);
+		printf("%d ", *i);
 
 	/* test char set ********************/
 	set<char> cs = nfa_char_set(table, nfa);
@@ -310,3 +310,5 @@ void seu_lex(int argc, char* argv[])
 	fprintf(yyout, "%s\n", subroutines.c_str());
 
 }
+
+

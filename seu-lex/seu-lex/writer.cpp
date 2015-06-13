@@ -138,4 +138,15 @@ void write_dfa(FILE *yyout, DFA &dfa, vector<THESEUS> &ships)
 }
 
 
+void generate_file_path(char *in, char *out)
+{
+	char name[] = "yy.lex.c";
+	char *ptr;
 
+	strcpy(out, in);
+	ptr = strrchr(out, '\\');
+	if (ptr)
+		strcpy(++ptr, name);
+	else
+		strcpy(out, name);
+}

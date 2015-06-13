@@ -139,15 +139,12 @@ NFA regex_to_nfa(queue<RE> &regex, NFA_TABLE table, NFA_STATE_ID *id)
 		switch (re.type) {
 		case character:
 			temp = creat_nfa_c(table, id, re.c);
-			printf("nfa  : push [%d %d]\n", temp.initial, temp.accept); ////////////
 			nfa.push(temp);
 			break;
 		case right_pare:
 			while (1) {
 				re_type op = opstk.top();
 				opstk.pop();
-				printf("opstk: pop "); 	/////////////////////
-				print_re_type(op); 		/////////////////////
 				if (op == left_pare)
 					break;
 				else
@@ -156,29 +153,21 @@ NFA regex_to_nfa(queue<RE> &regex, NFA_TABLE table, NFA_STATE_ID *id)
 			break;
 		case left_pare:
 			opstk.push(left_pare);
-			printf("opstk: push "); /////////////////////
-			print_re_type(re.type); /////////////////////
 			break;
 		default:
 			while (!opstk.empty() &&
 					re_prio(re.type) < re_prio(opstk.top()) ) {
 				re_type op = opstk.top();
 				opstk.pop();
-				printf("opstk: pop "); 	/////////////////////
-				print_re_type(op); 		/////////////////////
 				foo(table, id, op, nfa);
 			}
 			opstk.push(re.type);
-			printf("opstk: push "); /////////////////////
-			print_re_type(re.type); /////////////////////
 		}
 	}
 
 	while (!opstk.empty()) {
 		re_type op = opstk.top();
 		opstk.pop();
-		printf("opstk: pop "); 	/////////////////////
-		print_re_type(op); 		/////////////////////
 		foo(table, id, op, nfa);
 	}
 
@@ -199,10 +188,7 @@ void foo(NFA_TABLE table, NFA_STATE_ID *id,
 		nfa.pop();
 		nfa2 = nfa.top();
 		nfa.pop();
-		printf("nfa  : pop [%d %d]\n", nfa1.initial, nfa1.accept); /////////////
-		printf("nfa  : pop [%d %d]\n", nfa2.initial, nfa2.accept); /////////////
 		nfa3 = nfa_concat(table, nfa2, nfa1);
-		printf("nfa  : push [%d %d]\n", nfa3.initial, nfa3.accept); /////////////
 		nfa.push( nfa3);
 		break;
 	case uni :
@@ -210,18 +196,13 @@ void foo(NFA_TABLE table, NFA_STATE_ID *id,
 		nfa.pop();
 		nfa2 = nfa.top();
 		nfa.pop();
-		printf("nfa  : pop [%d %d]\n", nfa1.initial, nfa1.accept); /////////////
-		printf("nfa  : pop [%d %d]\n", nfa2.initial, nfa2.accept); /////////////
 		nfa3 = nfa_union(table, id, nfa2, nfa1);
-		printf("nfa  : push [%d %d]\n", nfa3.initial, nfa3.accept); /////////////
 		nfa.push( nfa3);
 		break;
 	case star :
 		nfa1 = nfa.top();
 		nfa.pop();
-		printf("nfa  : pop [%d %d]\n", nfa1.initial, nfa1.accept); /////////////
 		nfa3 = nfa_star(table, id, nfa1);
-		printf("nfa  : push [%d %d]\n", nfa3.initial, nfa3.accept); /////////////
 		nfa.push( nfa3 );
 		break;
 	case pos_clo :
@@ -278,15 +259,16 @@ set<char> nfa_char_set(NFA_TABLE table, NFA nfa)
   nfa_adj_e
   get all nfa states can be arrived via epsilon edge from give states
 */
-idmap nfa_adj_e(NFA_TABLE table, NFA_STATE_ID id)
+set<NFA_STATE_ID> nfa_adj_e(NFA_TABLE table, NFA_STATE_ID id)
 {
-	idmap m;
+	set<NFA_STATE_ID> s;
 	NFA_EDGE *e;
+	
 	for (e = table[id].first_edge; e != NULL; e = e->next) {
 		if (e->cost.epsilon)
-			m.insert(idpair(e->adjvex, false));
+			s.insert(e->adjvex);
 	}
-	return m;
+	return s;
 }
 
 
@@ -294,30 +276,27 @@ idmap nfa_adj_e(NFA_TABLE table, NFA_STATE_ID id)
   nfa_e_closure
   the epsilon closure of a set of nfa states
 */
-idmap nfa_e_closure(NFA_TABLE table, idmap ids)
+set<NFA_STATE_ID> nfa_e_closure(NFA_TABLE table, set<NFA_STATE_ID> sns)
 {
-	idmap temp;
-	idmap::iterator i;
-	bool all_taged;
+	set<NFA_STATE_ID> taged_states;
+	set<NFA_STATE_ID>::iterator i;
+	NFA_STATE_ID state;
+	NFA_EDGE *e;
 
-	for (i=ids.begin(); i!=ids.end(); i++)	/* make all untaged */
-		i->second = false;
+	while(!sns.empty()) {
+		i = sns.begin();
+		state = *i;
+		taged_states.insert(state);
+		sns.erase(i);
 
-	while(1) {
-		all_taged = true;
-		for (i=ids.begin(); i!=ids.end(); i++)
-			if (!i->second) {
-				all_taged = false;
-				break;
+		for (e = table[state].first_edge; e != NULL; e = e->next) {
+			if (e->cost.epsilon ) {
+				if (!taged_states.count(e->adjvex))
+					sns.insert(e->adjvex);
 			}
-		if (all_taged) 
-			return ids;
-
-		i->second = true;
-		temp = nfa_adj_e(table, i->first);
-		for (i=temp.begin(); i!=temp.end(); i++)
-			ids.insert(*i);
+		}
 	}
+	return taged_states;
 }
 
 /*
@@ -338,18 +317,19 @@ NFA_STATE_ID nfa_adj_c(NFA_TABLE table, NFA_STATE_ID id, char c)
   get the set arrived via character from given set.
   used when nfa to dfa.
 */
-idmap nfa_cset(NFA_TABLE table, idmap ids, char c)
+set<NFA_STATE_ID> nfa_cset(NFA_TABLE table, set<NFA_STATE_ID> sns, char c)
 {
-	idmap m;
-	idmap::iterator i;
+	set<NFA_STATE_ID> s;
+	set<NFA_STATE_ID>::iterator i;
 	NFA_STATE_ID adj;
-	for (i=ids.begin(); i!=ids.end(); i++) {
-		adj = nfa_adj_c(table, i->first, c);
+
+	for (i=sns.begin(); i!=sns.end(); i++) {
+		adj = nfa_adj_c(table, *i, c);
 		if (adj != -1)
-			m.insert(idpair(adj, false));
+			s.insert(adj);
 	}
-		
-	return m;
+	
+	return s;
 }
 
 

@@ -85,50 +85,45 @@ void nfa_to_dfa(NFA_TABLE nfa_tbl, NFA nfa, DFA &dfa, vector<THESEUS> &ships)
 {
 	dfa_clear(dfa);
 
-	vector<idmap> v;	/* dfa state <--> nfa closure */
-	vector<idmap>::size_type vt1, vt2;
-	idmap imtemp;
+	vector< set<NFA_STATE_ID> > v;	/* dfa state <--> nfa closure */
+	vector< set<NFA_STATE_ID> >::size_type vt1, vt2;
+	set<NFA_STATE_ID> sns;			/* set of nfa states */
 	
 	vector<THESEUS>::iterator shipsit;
 
 	set<char> char_set = nfa_char_set(nfa_tbl, nfa);
 	set<char>::iterator csi;
 
-	printf("char set: \n");					////////////////////////////////
-	for (csi = char_set.begin(); csi != char_set.end(); csi++)
-		printf("%c ", *csi);
-	printf("********************************************\n");
-
-
 	DFA_STATE_ID new_state;
 	bool is_new_state;
 
-	v.push_back(imtemp);	/* star from 1 */
-	imtemp.insert(idpair(nfa.initial, false));		/* s0 */
-	v.push_back(nfa_e_closure(nfa_tbl, imtemp));	/* s0 epsilon closure */
+	v.push_back(sns);	/* star from 1 */
+	
+	sns.insert(nfa.initial);					/* s0 */
+	v.push_back(nfa_e_closure(nfa_tbl, sns));	/* s0 epsilon closure */
 	dfa_add_states(dfa);
 
 	for (vt1=1; vt1<v.size(); vt1++) {
 		for (csi = char_set.begin(); csi != char_set.end(); csi++) {		/* for every char */
-			imtemp = nfa_e_closure(nfa_tbl, nfa_cset(nfa_tbl, v[vt1], *csi));	/* get epsilon closure */
-			if (imtemp.empty())
+			sns = nfa_e_closure(nfa_tbl, nfa_cset(nfa_tbl, v[vt1], *csi));	/* get epsilon closure */
+			if (sns.empty())
 				continue;
 
 			is_new_state = true;
 			for (vt2=1; vt2<v.size(); vt2++)
-				if (imtemp == v[vt2]) {			/* if not new state */
+				if (sns == v[vt2]) {			/* if not new state */
 					dfa_add_edge(dfa, vt1, *csi, vt2);	/* add edge */
 					is_new_state = false;
 					break;
 				}
 			if (is_new_state) {					/* if new state */
-				v.push_back(imtemp);
+				v.push_back(sns);
 				new_state = dfa_add_states(dfa);
 				dfa_add_edge(dfa, vt1, *csi, new_state);
-				if (imtemp.find(nfa.accept) != imtemp.end()) { /* is accept state? */
+				if (sns.count(nfa.accept)) { /* is accept state? */
 					dfa_set_accept(dfa, new_state);
 					for (shipsit = ships.begin(); shipsit != ships.end(); shipsit++) {
-						if (imtemp.find(shipsit->nfa.accept) != imtemp.end()) {
+						if (sns.count(shipsit->nfa.accept)) {
 							shipsit->dfa_states.push_back(new_state);
 							break;
 						}
@@ -139,19 +134,15 @@ void nfa_to_dfa(NFA_TABLE nfa_tbl, NFA nfa, DFA &dfa, vector<THESEUS> &ships)
 	}
 
 	/* for test *********************************/
-	idmap::iterator imi;
+	set<NFA_STATE_ID>::iterator si;
 	printf("\ndfa states <-------> nfa closure\n");
 	for (vt1 = 0; vt1 < v.size(); vt1++) {
-		printf("%d:", vt1);
-		for (imi=v[vt1].begin(); imi!=v[vt1].end(); imi++)
-			printf("%d ", imi->first);
+		printf("%d: ", vt1);
+		for (si = v[vt1].begin(); si != v[vt1].end(); si++)
+			printf("%d ", *si);
 		printf("\n");
 	}
-	// set<DFA_STATE_ID>::iterator acci;
-	// printf("accept state: \n");
-	// for (acci = accept.begin(); acci != accept.end(); acci++)
-	// 	printf("%d ", *acci);
-	// printf("\n");
+
 }
 
 

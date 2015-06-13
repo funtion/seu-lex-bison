@@ -177,6 +177,8 @@ string read_line(FILE *file)
 		}
 	}
 
+	return s;
+
 }
 
 void read_definition(FILE *file, bool *section_end, map<string, string> &definitions)

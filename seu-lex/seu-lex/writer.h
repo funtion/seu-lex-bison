@@ -5,7 +5,7 @@
 #define _WRITER_H
 
 
-
+void generate_file_path(char *in, char *out);
 
 void write_dfa(FILE *yyout, DFA &dfa, vector<THESEUS> &ships);
 void write_accept(FILE *yyout, DFA &dfa);

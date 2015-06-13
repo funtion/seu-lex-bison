@@ -101,11 +101,11 @@ typedef map<NFA_STATE_ID, bool> idmap;
 /* get the char set of a nfa */
 set<char> nfa_char_set(NFA_TABLE table, NFA nfa);
 
-idmap nfa_adj_e(NFA_TABLE table, NFA_STATE_ID id);
-idmap nfa_e_closure(NFA_TABLE table, idmap ids);
+set<NFA_STATE_ID> nfa_adj_e(NFA_TABLE table, NFA_STATE_ID id);
+set<NFA_STATE_ID> nfa_e_closure(NFA_TABLE table, set<NFA_STATE_ID> ids);
 
 NFA_STATE_ID nfa_adj_c(NFA_TABLE table, NFA_STATE_ID id, char c);
-idmap nfa_cset(NFA_TABLE table, idmap ids, char c);
+set<NFA_STATE_ID> nfa_cset(NFA_TABLE table, set<NFA_STATE_ID> ids, char c);
 
 
 /*
